@@ -16,10 +16,10 @@
  *
  */
 
-#ifndef AIRBALL_PHYSICS_COORDINATES_HPP_
-#define AIRBALL_PHYSICS_COORDINATES_HPP_
+#ifndef AIRBALL_GAME_COORDINATES_HPP_
+#define AIRBALL_GAME_COORDINATES_HPP_
 
-namespace physics
+namespace game
 {
 
 struct Coordinates
@@ -32,6 +32,6 @@ struct Coordinates
     unsigned y;
 };
 
-} // namespace physics
+} // namespace game
 
-#endif // AIRBALL_PHYSICS_COORDINATES_HPP_
+#endif // AIRBALL_GAME_COORDINATES_HPP_

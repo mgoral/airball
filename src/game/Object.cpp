@@ -18,11 +18,11 @@
 
 #include "Object.hpp"
 
-namespace physics
+namespace game
 {
 
 Object::Object(const Coordinates& coord, unsigned radius) : coord_(coord), radius_(radius)
 {
 }
 
-} // namespace physics
+} // namespace game

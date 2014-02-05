@@ -1,11 +1,11 @@
 # src/Makefile.am
 
-SUBDIRS = physics
+SUBDIRS = game
 
 bin_PROGRAMS = airball
 
-LDADD = physics/libphysics.a
-AM_CPPFLAGS = -I${srcdir}/physics
+LDADD = game/libgame.a
+AM_CPPFLAGS = -I${srcdir}/game
 
 airball_SOURCES = \
 	main.cpp

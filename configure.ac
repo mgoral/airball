@@ -18,7 +18,7 @@ AC_SUBST([AM_CXXFLAGS], ["-Wall -Wextra -Werror -pedantic"])
 AC_CONFIG_FILES([
     Makefile
     src/Makefile
-    src/physics/Makefile
+    src/game/Makefile
 ])
 
 AC_OUTPUT

@@ -20,6 +20,6 @@
 
 int main()
 {
-    physics::Coordinates coord(1,2);
+    game::Coordinates coord(1,2);
     return 0;
 }

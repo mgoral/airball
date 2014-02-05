@@ -16,12 +16,12 @@
  *
  */
 
-#ifndef AIRBALL_PHYSICS_OBJECT_HPP_
-#define AIRBALL_PHYSICS_OBJECT_HPP_
+#ifndef AIRBALL_GAME_OBJECT_HPP_
+#define AIRBALL_GAME_OBJECT_HPP_
 
 #include "Coordinates.hpp"
 
-namespace physics
+namespace game
 {
 
 /**
@@ -37,6 +37,6 @@ private:
     unsigned radius_;
 };
 
-} // namespace physics
+} // namespace game
 
-#endif // AIRBALL_PHYSICS_OBJECT_HPP_
+#endif // AIRBALL_GAME_OBJECT_HPP_
