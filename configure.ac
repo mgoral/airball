@@ -1,5 +1,6 @@
 AC_INIT([Airball], [0.1.0], [https://github.com/mgoral/airball/issues])
-AM_INIT_AUTOMAKE([foreign -Wall])
+AM_INIT_AUTOMAKE([1.11 foreign -Wall])
+AM_SILENT_RULES([yes])
 
 AC_PREFIX_DEFAULT([/usr])
 
@@ -13,12 +14,15 @@ AM_PROG_AR
 AC_PROG_LN_S
 AC_PROG_MKDIR_P
 
+AX_PTHREAD
+
 AC_SUBST([AM_CXXFLAGS], ["-Wall -Wextra -Werror -pedantic"])
 
 AC_CONFIG_FILES([
     Makefile
     src/Makefile
     src/game/Makefile
+    tests/Makefile
 ])
 
 AC_OUTPUT
