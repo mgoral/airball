@@ -32,6 +32,8 @@ class Object
 public:
     Object(const Coordinates& coord, unsigned radius);
 
+    bool collides(const Object& other) const;
+
 private:
     Coordinates coord_;
     unsigned radius_;

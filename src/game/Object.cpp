@@ -25,4 +25,14 @@ Object::Object(const Coordinates& coord, unsigned radius) : coord_(coord), radiu
 {
 }
 
+bool Object::collides(const Object& other) const
+{
+    unsigned radiusSum = radius_ + other.radius_;
+    int distanceX = coord_.x - other.coord_.x;
+    int distanceY = coord_.y - other.coord_.y;
+
+    return ((radiusSum * radiusSum) >= (distanceX * distanceX + distanceY * distanceY));
+}
+
+
 } // namespace game

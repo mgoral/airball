@@ -24,12 +24,12 @@ namespace game
 
 struct Coordinates
 {
-    Coordinates(unsigned x, unsigned y) : x(x), y(y)
+    Coordinates(int x, int y) : x(x), y(y)
     {
     }
 
-    unsigned x;
-    unsigned y;
+    int x;
+    int y;
 };
 
 } // namespace game

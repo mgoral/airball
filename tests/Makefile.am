@@ -10,7 +10,7 @@ AM_CPPFLAGS = \
 	-I$(gmockdir)/include \
 	-I$(gtestdir) \
 	-I$(gtestdir)/include \
-	-I $(airballdir)/game
+	-I $(airballdir)
 
 AM_CXXFLAGS = @PTHREAD_CFLAGS@
 AM_LIBS = @PTHREAD_LIBS@
@@ -22,5 +22,6 @@ TESTS = airball_ut
 check_PROGRAMS = airball_ut
 
 airball_ut_SOURCES = \
+	ObjectTests.cpp \
 	main.cpp \
 	${gtestdir}/src/gtest-all.cc
