@@ -31,7 +31,8 @@ bool Object::collides(const Object& other) const
     int distanceX = coord_.x - other.coord_.x;
     int distanceY = coord_.y - other.coord_.y;
 
-    return ((radiusSum * radiusSum) >= (distanceX * distanceX + distanceY * distanceY));
+    return ((radiusSum * radiusSum) >= static_cast<unsigned>(
+        distanceX * distanceX + distanceY * distanceY));
 }
 
 

@@ -1,6 +1,6 @@
 # src/CMakeLists.txt
 
-add_definitions(-Wall -Wextra -Werror -pedantic)
+add_definitions(-Werror)
 
 # General includes
 include_directories(
