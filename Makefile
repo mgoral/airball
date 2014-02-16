@@ -6,7 +6,7 @@ CD = cd
 MAKE = make --no-print-directory
 CMAKE = cmake
 
-CMAKE_BUILD_DIR=./cmake
+CMAKE_BUILD_DIR=./build
 
 .DEFAULT_GOAL = all
 
