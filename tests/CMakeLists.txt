@@ -10,7 +10,7 @@ include_directories(
     ${GTEST_DIR}/include
 
     ${AIRBALL_SRC_DIR}
-    ${AIRBALL_SRC_DIR}/game
+    ${AIRBALL_SRC_DIR}/objects
 )
 
 file(GLOB AIRBALL_TESTS_SOURCESS ./*.cpp)
@@ -25,7 +25,7 @@ target_link_libraries(
     gtest
 
     # Then link helper libs
-    game
+    objects
 )
 
 add_custom_target(

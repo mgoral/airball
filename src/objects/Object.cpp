@@ -18,7 +18,9 @@
 
 #include "Object.hpp"
 
-namespace game
+namespace airball
+{
+namespace objects
 {
 
 Object::Object(const Coordinates& coord, unsigned radius) : coord_(coord), radius_(radius)
@@ -36,4 +38,5 @@ bool Object::collides(const Object& other) const
 }
 
 
-} // namespace game
+} // namespace objects
+} // namespace airball

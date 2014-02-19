@@ -16,10 +16,12 @@
  *
  */
 
-#ifndef AIRBALL_GAME_COORDINATES_HPP_
-#define AIRBALL_GAME_COORDINATES_HPP_
+#ifndef AIRBALL_OBJECTS_COORDINATES_HPP_
+#define AIRBALL_OBJECTS_COORDINATES_HPP_
 
-namespace game
+namespace airball
+{
+namespace objects
 {
 
 struct Coordinates
@@ -32,6 +34,7 @@ struct Coordinates
     int y;
 };
 
-} // namespace game
+} // namespace objects
+} // namespace airball
 
-#endif // AIRBALL_GAME_COORDINATES_HPP_
+#endif // AIRBALL_OBJECTS_COORDINATES_HPP_

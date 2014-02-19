@@ -5,12 +5,12 @@ add_definitions(-Werror)
 # General includes
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
-    game
+    objects
 )
 
-# libgame
-file(GLOB_RECURSE LIB_GAME_SOURCES game/*.cpp)
-add_library(game STATIC ${LIB_GAME_SOURCES})
+# libobjects
+file(GLOB_RECURSE LIB_OBJECTS_SOURCES objects/*.cpp)
+add_library(objects STATIC ${LIB_OBJECTS_SOURCES})
 
 
 # main executable
@@ -22,6 +22,6 @@ target_link_libraries(
     ${AIRBALL_BIN}
 
     # Helper libs
-    game
+    objects
 )
 
