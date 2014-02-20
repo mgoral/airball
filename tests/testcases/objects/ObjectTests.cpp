@@ -18,8 +18,8 @@
 
 #include <gtest/gtest.h>
 
-#include "game/Coordinates.hpp"
-#include "game/Object.hpp"
+#include "objects/Coordinates.hpp"
+#include "objects/Object.hpp"
 
 class ObjectTests : public ::testing::Test
 {
@@ -53,97 +53,97 @@ protected:
 
 TEST_F(ObjectTests, objectsCollideWhenTheyHaveTheSameCoordinates)
 {
-    game::Coordinates coord(3, 4);
-    game::Object objRef(coord, radius_);
-    game::Object obj2(coord, zeroRadius_);
+    airball::objects::Coordinates coord(3, 4);
+    airball::objects::Object objRef(coord, radius_);
+    airball::objects::Object obj2(coord, zeroRadius_);
 
     ASSERT_TRUE(objRef.collides(obj2));
 }
 
 TEST_F(ObjectTests, objectsOnLeftCollideOnABorder)
 {
-    game::Coordinates coord1(0, 0);
-    game::Coordinates coord2(-4, 0);
+    airball::objects::Coordinates coord1(0, 0);
+    airball::objects::Coordinates coord2(-4, 0);
 
-    game::Object objRef(coord1, radius_);
-    game::Object obj2(coord2, radius_);
+    airball::objects::Object objRef(coord1, radius_);
+    airball::objects::Object obj2(coord2, radius_);
 
     ASSERT_TRUE(objRef.collides(obj2));
 }
 
 TEST_F(ObjectTests, objectsOnLeftDoNotCollide)
 {
-    game::Coordinates coord1(0, 0);
-    game::Coordinates coord2(-5, 0);
+    airball::objects::Coordinates coord1(0, 0);
+    airball::objects::Coordinates coord2(-5, 0);
 
-    game::Object objRef(coord1, radius_);
-    game::Object obj2(coord2, radius_);
+    airball::objects::Object objRef(coord1, radius_);
+    airball::objects::Object obj2(coord2, radius_);
 
     ASSERT_FALSE(objRef.collides(obj2));
 }
 
 TEST_F(ObjectTests, objectsOnRightCollideOnABorder)
 {
-    game::Coordinates coord1(0, 0);
-    game::Coordinates coord2(4, 0);
+    airball::objects::Coordinates coord1(0, 0);
+    airball::objects::Coordinates coord2(4, 0);
 
-    game::Object objRef(coord1, radius_);
-    game::Object obj2(coord2, radius_);
+    airball::objects::Object objRef(coord1, radius_);
+    airball::objects::Object obj2(coord2, radius_);
 
     ASSERT_TRUE(objRef.collides(obj2));
 }
 
 TEST_F(ObjectTests, objectsOnRightDoNotCollide)
 {
-    game::Coordinates coord1(0, 0);
-    game::Coordinates coord2(5, 0);
+    airball::objects::Coordinates coord1(0, 0);
+    airball::objects::Coordinates coord2(5, 0);
 
-    game::Object objRef(coord1, radius_);
-    game::Object obj2(coord2, radius_);
+    airball::objects::Object objRef(coord1, radius_);
+    airball::objects::Object obj2(coord2, radius_);
 
     ASSERT_FALSE(objRef.collides(obj2));
 }
 
 TEST_F(ObjectTests, objectsOnTopCollideOnABorder)
 {
-    game::Coordinates coord1(0, 0);
-    game::Coordinates coord2(0, -4);
+    airball::objects::Coordinates coord1(0, 0);
+    airball::objects::Coordinates coord2(0, -4);
 
-    game::Object objRef(coord1, radius_);
-    game::Object obj2(coord2, radius_);
+    airball::objects::Object objRef(coord1, radius_);
+    airball::objects::Object obj2(coord2, radius_);
 
     ASSERT_TRUE(objRef.collides(obj2));
 }
 
 TEST_F(ObjectTests, objectsOnTopDoNotCollide)
 {
-    game::Coordinates coord1(0, 0);
-    game::Coordinates coord2(0, -5);
+    airball::objects::Coordinates coord1(0, 0);
+    airball::objects::Coordinates coord2(0, -5);
 
-    game::Object objRef(coord1, radius_);
-    game::Object obj2(coord2, radius_);
+    airball::objects::Object objRef(coord1, radius_);
+    airball::objects::Object obj2(coord2, radius_);
 
     ASSERT_FALSE(objRef.collides(obj2));
 }
 
 TEST_F(ObjectTests, objectsOnBottomCollideOnABorder)
 {
-    game::Coordinates coord1(0, 0);
-    game::Coordinates coord2(0, 4);
+    airball::objects::Coordinates coord1(0, 0);
+    airball::objects::Coordinates coord2(0, 4);
 
-    game::Object objRef(coord1, radius_);
-    game::Object obj2(coord2, radius_);
+    airball::objects::Object objRef(coord1, radius_);
+    airball::objects::Object obj2(coord2, radius_);
 
     ASSERT_TRUE(objRef.collides(obj2));
 }
 
 TEST_F(ObjectTests, objectsOnBottomDoNotCollide)
 {
-    game::Coordinates coord1(0, 0);
-    game::Coordinates coord2(0, 5);
+    airball::objects::Coordinates coord1(0, 0);
+    airball::objects::Coordinates coord2(0, 5);
 
-    game::Object objRef(coord1, radius_);
-    game::Object obj2(coord2, radius_);
+    airball::objects::Object objRef(coord1, radius_);
+    airball::objects::Object obj2(coord2, radius_);
 
     ASSERT_FALSE(objRef.collides(obj2));
 }

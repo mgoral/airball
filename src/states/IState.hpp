@@ -16,10 +16,32 @@
  *
  */
 
-#include "objects/Coordinates.hpp"
+#ifndef AIRBALL_STATES_ISTATE_HPP_
+#define AIRBALL_STATES_ISTATE_HPP_
 
-int main()
+namespace airball
 {
-    airball::objects::Coordinates coord(1,2);
-    return 0;
-}
+namespace states
+{
+
+class StateStack;
+
+class IState
+{
+public:
+    virtual ~IState()
+    {
+    }
+
+    virtual void onEnter() = 0;
+    virtual void onExit() = 0;
+    virtual void onOverride() = 0;
+    virtual void onResume() = 0;
+
+    virtual void update(StateStack& stack) = 0;
+};
+
+} // namespace states
+} // namespace airball
+
+#endif // AIRBALL_STATES_ISTATE_HPP_
