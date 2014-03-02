@@ -5,6 +5,10 @@ add_definitions(-Werror)
 # General includes
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
+
+    # Headers for used libraries
+    ${GETTEXT_INCLUDE_DIR}
+    ${SDL2_INCLUDE_DIRS}
 )
 
 # libobjects
@@ -17,7 +21,7 @@ add_library(states STATIC ${LIB_STATES_SOURCES})
 
 
 # main executable
-set(AIRBALL_SOURCES main.cpp)
+file(GLOB AIRBALL_SOURCES *.cpp)
 set(AIRBALL_BIN ${PROJECT_NAME})
 
 add_executable(${AIRBALL_BIN} ${AIRBALL_SOURCES})
@@ -27,5 +31,9 @@ target_link_libraries(
     # Helper libs
     objects
     states
+
+    # used libraries
+    ${GETTEXT_LIBRARIES}
+    ${SDL2_LIBRARIES}
 )
 

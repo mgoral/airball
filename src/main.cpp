@@ -16,10 +16,45 @@
  *
  */
 
-#include "objects/Coordinates.hpp"
+#include <cstdlib>
+#include <stdexcept>
+#include <initializer_list>
+
+#include "Logger.hpp"
+#include "Translate.hpp"
+#include "Application.hpp"
+
+void terminateHandler()
+{
+    airball::Logger log(airball::LogCategorySystem);
+    log.info(_("Terminating"));
+    std::_Exit(EXIT_FAILURE);
+}
+
+void initLogging()
+{
+}
 
 int main()
 {
-    airball::objects::Coordinates coord(1,2);
-    return 0;
+    std::set_terminate(&terminateHandler);
+
+    airball::Logger::init();
+
+    try
+    {
+        airball::Application app;
+        return app.run();
+    }
+    catch (const std::exception& e)
+    {
+        airball::Logger log(airball::LogCategoryApplication);
+        log.error(_("Critical error occured during program execution:"));
+        log.error(e.what());
+        std::terminate();
+    }
+
+    // Usually program shouldn't go THAT far...
+    return 3;
 }
+
