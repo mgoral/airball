@@ -16,6 +16,9 @@ pkg_search_module(SDL2 REQUIRED sdl2)
 # Global definitions appliable for all targets
 add_definitions(-Wall -Wextra -pedantic -std=c++11)
 
+# Additional flags passed by user
+add_definitions(${ADDITIONAL_CXX_FLAGS})
+
 set(AIRBALL_SRC_DIR    ${PROJECT_SOURCE_DIR}/src)
 set(AIRBALL_TESTS_DIR  ${PROJECT_SOURCE_DIR}/tests)
 set(AIRBALL_LIBS_DIR   ${PROJECT_SOURCE_DIR}/thirdparty)

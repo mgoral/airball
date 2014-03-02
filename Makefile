@@ -11,9 +11,10 @@ GDB = gdb
 #==============================================================================
 # CMake specific flags and settings
 
+ADDITIONAL_CXX_FLAGS =
 CMAKE_FLAGS = -DCMAKE_BUILD_TYPE=Debug
 CMAKE_BUILD_DIR = ./build
-CMAKE = $(CD) $(CMAKE_BUILD_DIR) && cmake $(CMAKE_FLAGS)
+CMAKE = $(CD) $(CMAKE_BUILD_DIR) && cmake $(CMAKE_FLAGS) -DADDITIONAL_CXX_FLAGS="$(ADDITIONAL_CXX_FLAGS)"
 
 #==============================================================================
 # Make specific flags and settings
