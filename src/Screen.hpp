@@ -16,49 +16,52 @@
  *
  */
 
-#ifndef AIRBALL_APPLICATION_HPP_
-#define AIRBALL_APPLICATION_HPP_
+#ifndef AIRBALL_SCREEN_HPP_
+#define AIRBALL_SCREEN_HPP_
 
 #include <stdexcept>
 #include <string>
+#include <SDL2/SDL.h>
 
 #include "Logger.hpp"
-#include "Screen.hpp"
 
 namespace airball
 {
 
-class ApplicationError : public std::runtime_error
+class VideoError : public std::runtime_error
 {
 public:
-    explicit ApplicationError(const std::string& what) : std::runtime_error(what)
+    explicit VideoError(const std::string& what) : std::runtime_error(what)
     {
     }
 
-    explicit ApplicationError(const char* what) : std::runtime_error(what)
+    explicit VideoError(const char* what) : std::runtime_error(what)
     {
     }
 };
 
-class Application
+class Screen
 {
 public:
-    Application();
-    ~Application();
+    Screen(int width, int height, bool fullscreen);
+    Screen(int width, int height);
+    ~Screen();
 
-    Application(const Application&) = delete;
-    Application& operator=(const Application&) = delete;
+    Screen(const Screen&) = delete;
+    Screen& operator=(const Screen&) = delete;
 
-    int run();
+    void update() const;
 
 private:
-    void handleInput();
+    SDL_Window* initWindow(int width, int height, bool fullscreen);
+    SDL_Renderer* initRenderer();
 
 private:
     airball::Logger logger_;
-    bool stopApp_;
+    SDL_Window* window_;
+    SDL_Renderer* renderer_;
 };
 
 } // namespace airball
 
-#endif // AIRBALL_APPLICATION_HPP_
+#endif // AIRBALL_SCREEN_HPP_
