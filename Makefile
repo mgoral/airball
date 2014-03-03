@@ -14,6 +14,7 @@ GDB = gdb
 ADDITIONAL_CXX_FLAGS =
 CMAKE_FLAGS = -DCMAKE_BUILD_TYPE=Debug
 CMAKE_BUILD_DIR = ./build
+CMAKE_BIN_DIR = ./bin  # CMake creates this directory automatically
 CMAKE = $(CD) $(CMAKE_BUILD_DIR) && cmake $(CMAKE_FLAGS) -DADDITIONAL_CXX_FLAGS="$(ADDITIONAL_CXX_FLAGS)"
 
 #==============================================================================
@@ -35,16 +36,25 @@ prepare:
 all: prepare
 	$(MAKE)
 
-# check is just alias
+.PHONY: run
+run: all
+	$(CD) $(CMAKE_BIN_DIR) && ./$(PROJECT_NAME)
+
+run/gdb: all
+	$(CD) $(CMAKE_BIN_DIR) && $(GDB) $(PROJECT_NAME)
+
+
+# check is just an alias
+.PHONY: check
 check: ut
 
+.PHONY: ut
 ut: prepare
 	$(MAKE) $(PROJECT_NAME)_ut_run
 
 ut/gdb: prepare
 	$(MAKE) $(PROJECT_NAME)_ut
-	$(CD) $(CMAKE_BUILD_DIR)/tests && $(GDB) airball_ut
-
+	$(CD) $(CMAKE_BIN_DIR)/tests && $(GDB) $(PROJECT_NAME)_ut
 
 .PHONY: clean
 clean:
@@ -53,4 +63,5 @@ clean:
 .PHONY: distclean
 distclean:
 	$(RM) -r $(CMAKE_BUILD_DIR)
+	$(RM) -r $(CMAKE_BIN_DIR)
 

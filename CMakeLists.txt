@@ -6,6 +6,9 @@ project(airball)
 # Add CMake modules from "cmake" directory
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/")
 
+# Set the output directory
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/")
+
 # Allow usage of pkg-config
 include(FindPkgConfig)
 
