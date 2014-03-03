@@ -31,10 +31,6 @@ void terminateHandler()
     std::_Exit(EXIT_FAILURE);
 }
 
-void initLogging()
-{
-}
-
 int main()
 {
     std::set_terminate(&terminateHandler);
