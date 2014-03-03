@@ -19,7 +19,8 @@
 #include <SDL2/SDL.h>
 
 #include "Screen.hpp"
-#include "Translate.hpp"
+
+#include "detail/Translate.hpp"
 
 namespace airball
 {

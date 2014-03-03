@@ -21,8 +21,9 @@
 #include <initializer_list>
 
 #include "Logger.hpp"
-#include "Translate.hpp"
 #include "Application.hpp"
+
+#include "detail/Translate.hpp"
 
 void terminateHandler()
 {

@@ -21,7 +21,8 @@
 #include <SDL2/SDL.h>
 
 #include "Application.hpp"
-#include "Translate.hpp"
+
+#include "detail/Translate.hpp"
 
 namespace airball
 {

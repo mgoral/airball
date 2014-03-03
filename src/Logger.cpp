@@ -19,7 +19,8 @@
 #include <cstdarg>
 
 #include "Logger.hpp"
-#include "Utils.hpp"
+
+#include "detail/Utils.hpp"
 
 namespace airball
 {
