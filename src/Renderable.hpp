@@ -16,51 +16,34 @@
  *
  */
 
-#ifndef AIRBALL_APPLICATION_HPP_
-#define AIRBALL_APPLICATION_HPP_
+#ifndef AIRBALL_RENDERABLE_HPP_
+#define AIRBALL_RENDERABLE_HPP_
 
-#include <stdexcept>
 #include <string>
-
-#include "Logger.hpp"
-#include "Screen.hpp"
-
-#include "states/StateStack.hpp"
+#include <SDL2/SDL.h>
 
 namespace airball
 {
 
-class ApplicationError : public std::runtime_error
+class Renderable
 {
 public:
-    explicit ApplicationError(const std::string& what) : std::runtime_error(what)
+    /**
+     * Returns image name that should be rendered (e.g. 'image.png').
+     */
+    virtual std::string imageName() const = 0;
+
+    /**
+     * Returns a part of image that should be rendered (e.g. when a single image contains several
+     * object states). If whole image should be rendered, a nullptr is returned (default
+     * implementation).
+     */
+    virtual SDL_Rect* getImagePart() const
     {
+        return nullptr;
     }
-
-    explicit ApplicationError(const char* what) : std::runtime_error(what)
-    {
-    }
-};
-
-class Application
-{
-public:
-    Application();
-    ~Application();
-
-    Application(const Application&) = delete;
-    Application& operator=(const Application&) = delete;
-
-    int run();
-
-private:
-    void handleInput(airball::states::StateStack& stateStack);
-
-private:
-    airball::Logger logger_;
-    bool stopApp_;
 };
 
 } // namespace airball
 
-#endif // AIRBALL_APPLICATION_HPP_
+#endif // AIRBALL_RENDERABLE_HPP_

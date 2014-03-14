@@ -16,51 +16,42 @@
  *
  */
 
-#ifndef AIRBALL_APPLICATION_HPP_
-#define AIRBALL_APPLICATION_HPP_
 
-#include <stdexcept>
-#include <string>
 
-#include "Logger.hpp"
-#include "Screen.hpp"
-
-#include "states/StateStack.hpp"
+#ifndef AIRBALL_MAP_COORDINATES_HPP_
+#define AIRBALL_MAP_COORDINATES_HPP_
 
 namespace airball
 {
-
-class ApplicationError : public std::runtime_error
+namespace map
 {
-public:
-    explicit ApplicationError(const std::string& what) : std::runtime_error(what)
+
+struct Coordinates
+{
+    Coordinates(unsigned x, unsigned y) : x(x), y(y)
     {
     }
 
-    explicit ApplicationError(const char* what) : std::runtime_error(what)
+    friend bool operator==(const Coordinates& lhs, const Coordinates& rhs)
     {
+        return (lhs.x == rhs.x && lhs.y == rhs.y);
     }
+
+    friend bool operator!=(const Coordinates& lhs, const Coordinates& rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    friend bool operator<(const Coordinates& lhs, const Coordinates& rhs)
+    {
+        return ((lhs.x < rhs.x) || ((lhs.x == rhs.x) && (lhs.y < rhs.y)));
+    }
+
+    unsigned x;
+    unsigned y;
 };
 
-class Application
-{
-public:
-    Application();
-    ~Application();
-
-    Application(const Application&) = delete;
-    Application& operator=(const Application&) = delete;
-
-    int run();
-
-private:
-    void handleInput(airball::states::StateStack& stateStack);
-
-private:
-    airball::Logger logger_;
-    bool stopApp_;
-};
-
+} // namespace map
 } // namespace airball
 
-#endif // AIRBALL_APPLICATION_HPP_
+#endif // AIRBALL_MAP_COORDINATES_HPP_

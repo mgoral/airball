@@ -15,7 +15,11 @@ include_directories(
     ${AIRBALL_SRC_DIR}
 )
 
-file(GLOB_RECURSE AIRBALL_TESTS_SOURCESS *.cpp)
+file(GLOB_RECURSE AIRBALL_TESTS_SOURCESS 
+    ${AIRBALL_SRC_DIR}/objects/*.cpp
+    ${AIRBALL_SRC_DIR}/states/*.cpp
+    ${AIRBALL_SRC_DIR}/Renderable.cpp
+    *.cpp)
 set(AIRBALL_TESTS_BIN ${PROJECT_NAME}_ut)
 
 add_executable(${AIRBALL_TESTS_BIN} ${AIRBALL_TESTS_SOURCESS})
@@ -25,10 +29,6 @@ target_link_libraries(
     # First link test environment
     gmock
     gtest
-
-    # Then link helper libs
-    objects
-    states
 )
 
 add_custom_target(

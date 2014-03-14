@@ -16,27 +16,48 @@
  *
  */
 
+#ifndef AIRBALL_MAP_OBJECTPREDICATES_HPP_
+#define AIRBALL_MAP_OBJECTPREDICATES_HPP_
 
+#include "Object.hpp"
 
-#ifndef AIRBALL_OBJECTS_COORDINATES_HPP_
-#define AIRBALL_OBJECTS_COORDINATES_HPP_
+#include "detail/Utils.hpp"
 
 namespace airball
 {
-namespace objects
+namespace map
+{
+namespace pred
 {
 
-struct Coordinates
+bool any(const Object& obj)
 {
-    Coordinates(int x, int y) : x(x), y(y)
-    {
-    }
+    UNUSED_PARAM(obj);
+    return true;
+}
 
-    int x;
-    int y;
-};
+bool isPlayer(const Object& obj)
+{
+    return obj.properties().player;
+}
 
-} // namespace objects
+bool isObstacle(const Object& obj)
+{
+    return obj.properties().obstacle;
+}
+
+bool isCreature(const Object& obj)
+{
+    return obj.properties().creature;
+}
+
+bool hasUuid(const Object& obj, unsigned uuid)
+{
+    return (obj.uuid() == uuid);
+}
+
+} // namespace pred
+} // namespace map
 } // namespace airball
 
-#endif // AIRBALL_OBJECTS_COORDINATES_HPP_
+#endif // AIRBALL_MAP_OBJECTPREDICATES_HPP_

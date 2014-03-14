@@ -26,7 +26,7 @@ namespace airball
 namespace states
 {
 
-StateStack::StateStack() : updateStarted_(false)
+StateStack::StateStack()
 {
 }
 
@@ -41,26 +41,43 @@ StateStack::~StateStack()
 void StateStack::update()
 {
     // Just in case e.g. state calls update as a callback
-    if (updateStarted_)
+    if (updateStarted_.locked())
         return;
 
-    updateStarted_ = true;
+    LockGuard<ScopeLock> lock(updateStarted_);
 
     // First process events from previous updates
     processEvents();
 
-    if (stateStack_.size() > 0)
+    if (!empty())
     {
         std::unique_ptr<IState>& currentState = stateStack_.back();
-        try
-        {
-            currentState->update(*this);
-        }
-        catch (const std::exception& e)
-        { }
+        currentState->update(*this);
     }
+}
 
-    updateStarted_ = false;
+void StateStack::handleEvent(SDL_Event& event)
+{
+    if (updateStarted_.locked())
+        return;
+
+    if (!empty())
+    {
+        std::unique_ptr<IState>& currentState = stateStack_.back();
+        currentState->handleEvent(event);
+    }
+}
+
+void StateStack::draw(Screen& screen)
+{
+    if (updateStarted_.locked())
+        return;
+
+    if (!empty())
+    {
+        std::unique_ptr<IState>& currentState = stateStack_.back();
+        currentState->draw(screen);
+    }
 }
 
 void StateStack::push(std::unique_ptr<IState> state)
@@ -97,6 +114,7 @@ void StateStack::pop()
     events_.push_back(event);
 }
 
+
 void StateStack::popEvent()
 {
     if (stateStack_.size() > 0)
@@ -112,6 +130,16 @@ void StateStack::processEvents()
     for (auto event : events_)
         event();
     events_.clear();
+}
+
+bool StateStack::empty() const
+{
+    return stateStack_.empty();
+}
+
+unsigned StateStack::size() const
+{
+    return stateStack_.size();
 }
 
 } // namespace states

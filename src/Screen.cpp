@@ -19,8 +19,10 @@
 #include <SDL2/SDL.h>
 
 #include "Screen.hpp"
+#include "Resources.hpp"
 
 #include "detail/Translate.hpp"
+#include "detail/Utils.hpp"
 
 namespace airball
 {
@@ -77,8 +79,18 @@ Screen::~Screen()
 
 void Screen::update() const
 {
-    SDL_RenderClear(renderer_);
     SDL_RenderPresent(renderer_);
+}
+
+void Screen::addRenderable(const Renderable& renderable, SDL_Rect* destination)
+{
+    SDL_Texture* texture = Resources::getImage(renderable.imageName(), renderer_);
+    SDL_RenderCopy(renderer_, texture, renderable.getImagePart(), destination);
+}
+
+void Screen::clear()
+{
+    SDL_RenderClear(renderer_);
 }
 
 

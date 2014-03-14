@@ -22,12 +22,67 @@
 #include <memory>
 #include <vector>
 
+#include <SDL2/SDL.h>
+
 #include "IState.hpp"
+#include "Screen.hpp"
+#include "Logger.hpp"
 
 namespace airball
 {
 namespace states
 {
+
+/**
+ * ScopeLock is used to check if state doesn't call certain methods as a callback (it may try to
+ * incorrectly do this e.g. during update()).
+ *
+ * Don't use lock() and unlock() directly. Use a LockGuard, a nice RAII wrapper.
+ */
+class ScopeLock
+{
+public:
+    ScopeLock() : locked_(false) { }
+
+    void lock()
+    {
+        locked_ = true;
+    }
+
+    void unlock()
+    {
+        locked_ = false;
+    }
+
+    bool locked() const
+    {
+        return locked_;
+    }
+
+private:
+    bool locked_;
+};
+
+template <class Lock>
+class LockGuard
+{
+public:
+    explicit LockGuard(Lock& lock) : lock_(lock)
+    {
+        lock_.lock();
+    }
+
+    ~LockGuard()
+    {
+        lock_.unlock();
+    }
+
+    LockGuard(const LockGuard&) = delete;
+    LockGuard& operator=(const LockGuard&) = delete;
+
+private:
+    Lock& lock_;
+};
 
 class StateStack
 {
@@ -35,14 +90,16 @@ public:
     StateStack();
     ~StateStack();
 
-    /**
-     * Checks if state on top of the stack has finished and pops it in that case.
-     * This method should be called periodically (e.g. each frame)
-     */
-
-    void update();
     void push(std::unique_ptr<IState> state);
     void pop();
+
+    bool empty() const;
+    unsigned size() const;
+
+    void update();
+    void handleEvent(SDL_Event& event);
+    void draw(Screen& screen);
+
 
 private:
     void processEvents();
@@ -53,7 +110,7 @@ private:
 private:
     std::vector<std::unique_ptr<IState>> stateStack_;
     std::vector<std::function<void()>> events_;
-    bool updateStarted_;
+    ScopeLock updateStarted_;
 };
 
 } // namespace states

@@ -16,51 +16,41 @@
  *
  */
 
-#ifndef AIRBALL_APPLICATION_HPP_
-#define AIRBALL_APPLICATION_HPP_
+#ifndef AIRBALL_STATES_GAMESTATE_HPP_
+#define AIRBALL_STATES_GAMESTATE_HPP_
 
-#include <stdexcept>
-#include <string>
+#include <vector>
 
-#include "Logger.hpp"
-#include "Screen.hpp"
+#include "IState.hpp"
 
-#include "states/StateStack.hpp"
+#include "map/Level.hpp"
 
 namespace airball
 {
+namespace states
+{
 
-class ApplicationError : public std::runtime_error
+class GameState : public IState
 {
 public:
-    explicit ApplicationError(const std::string& what) : std::runtime_error(what)
-    {
-    }
+    GameState();
 
-    explicit ApplicationError(const char* what) : std::runtime_error(what)
-    {
-    }
-};
+    void onEnter();
+    void onExit();
+    void onOverride();
+    void onResume();
 
-class Application
-{
-public:
-    Application();
-    ~Application();
-
-    Application(const Application&) = delete;
-    Application& operator=(const Application&) = delete;
-
-    int run();
+    void handleEvent(SDL_Event& event);
+    void update(StateStack& stack);
+    void draw(airball::Screen& screen);
 
 private:
-    void handleInput(airball::states::StateStack& stateStack);
-
-private:
-    airball::Logger logger_;
-    bool stopApp_;
+    airball::map::Level currentLevel_;  // TODO: there will be more than one level of course!
+    map::SharedCObjectPtr player_;
+    //map::Object player_;
 };
 
+} // namespace states
 } // namespace airball
 
-#endif // AIRBALL_APPLICATION_HPP_
+#endif // AIRBALL_STATES_GAMESTATE_HPP_

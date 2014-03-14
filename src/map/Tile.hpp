@@ -16,32 +16,46 @@
  *
  */
 
-#ifndef AIRBALL_OBJECTS_OBJECT_HPP_
-#define AIRBALL_OBJECTS_OBJECT_HPP_
+#ifndef AIRBALL_MAP_TILE_HPP_
+#define AIRBALL_MAP_TILE_HPP_
 
-#include "Coordinates.hpp"
+#include <string>
+
+#include "Renderable.hpp"
 
 namespace airball
 {
-namespace objects
+namespace map
 {
 
-/**
- * A circular object that has coordinates of its center and a radius.
- */
-class Object
+class Tile : public Renderable
 {
 public:
-    Object(const Coordinates& coord, unsigned radius);
+    explicit Tile(const std::string& imageName) : imageName_(imageName), obstacle_(false)
+    {
+    }
 
-    bool collides(const Object& other) const;
+    explicit Tile(const std::string& imageName, bool obstacle) :
+        imageName_(imageName), obstacle_(obstacle)
+    {
+    }
+
+    std::string imageName() const
+    {
+        return imageName_;
+    }
+
+    bool isObstacle() const
+    {
+        return obstacle_;
+    }
 
 private:
-    Coordinates coord_;
-    unsigned radius_;
+    std::string imageName_;
+    bool obstacle_;
 };
 
-} // namespace objects
-} // namespace airball
+} // namespace map
+} // namespace 
 
-#endif // AIRBALL_OBJECTS_OBJECT_HPP_
+#endif // AIRBALL_MAP_TILE_HPP_

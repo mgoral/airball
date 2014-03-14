@@ -19,6 +19,10 @@
 #ifndef AIRBALL_STATES_ISTATE_HPP_
 #define AIRBALL_STATES_ISTATE_HPP_
 
+#include <SDL2/SDL.h>
+
+#include "Screen.hpp"
+
 namespace airball
 {
 namespace states
@@ -38,7 +42,9 @@ public:
     virtual void onOverride() = 0;
     virtual void onResume() = 0;
 
+    virtual void handleEvent(SDL_Event& event) = 0;
     virtual void update(StateStack& stack) = 0;
+    virtual void draw(airball::Screen& screen) = 0;
 };
 
 } // namespace states

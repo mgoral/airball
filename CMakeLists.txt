@@ -15,9 +15,17 @@ include(FindPkgConfig)
 # Required packages
 find_package(Gettext REQUIRED)
 pkg_search_module(SDL2 REQUIRED sdl2)
+pkg_search_module(SDL2_IMAGE REQUIRED SDL2_image)
 
 # Global definitions appliable for all targets
 add_definitions(-Wall -Wextra -pedantic -std=c++11)
+
+# OS specific global flags
+if(WIN32)
+    add_definitions(-DWIN32)
+elseif(UNIX)
+    add_definitions(-DUNIX)
+endif()
 
 # Additional flags passed by user
 add_definitions(${ADDITIONAL_CXX_FLAGS})

@@ -16,27 +16,30 @@
  *
  */
 
-#include "Object.hpp"
+#ifndef AIRBALL_MAP_OBJECTPROPERTIES_HPP_
+#define AIRBALL_MAP_OBJECTPROPERTIES_HPP_
+
+#include <string>
 
 namespace airball
 {
-namespace objects
+namespace map
 {
 
-Object::Object(const Coordinates& coord, unsigned radius) : coord_(coord), radius_(radius)
+struct ObjectProperties
 {
-}
+    // Please provide a sensible defaults for all properties.
+    // When giving created ObjectProperties to objects, please fill all needed properties as the
+    // defaults may change.
 
-bool Object::collides(const Object& other) const
-{
-    unsigned radiusSum = radius_ + other.radius_;
-    int distanceX = coord_.x - other.coord_.x;
-    int distanceY = coord_.y - other.coord_.y;
+    std::string image = "";
 
-    return ((radiusSum * radiusSum) >= static_cast<unsigned>(
-        distanceX * distanceX + distanceY * distanceY));
-}
+    bool player = false;
+    bool obstacle = false;
+    bool creature = false;
+};
 
-
-} // namespace objects
+} // namespace map
 } // namespace airball
+
+#endif // AIRBALL_MAP_OBJECTPROPERTIES_HPP_

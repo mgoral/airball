@@ -18,9 +18,13 @@
 
 #include <thread>
 #include <chrono>
+#include <memory>
+
 #include <SDL2/SDL.h>
 
 #include "Application.hpp"
+
+#include "states/GameState.hpp"
 
 #include "detail/Translate.hpp"
 
@@ -50,17 +54,22 @@ int Application::run()
 
     airball::Screen screen(100, 100);
 
+    states::StateStack stateStack;
+    std::unique_ptr<states::IState> initialState(new states::GameState());
+    stateStack.push(std::move(initialState));
+
     while (!stopApp_)
     {
-        handleInput();
-        screen.update();
+        handleInput(stateStack);
+        stateStack.update();
+        stateStack.draw(screen);
         std::this_thread::sleep_for(std::chrono::milliseconds(30));  // FIXME: temporary solution
     }
 
     return 0;
 }
 
-void Application::handleInput()
+void Application::handleInput(airball::states::StateStack& stateStack)
 {
     SDL_Event event;
     if (SDL_PollEvent(&event))
@@ -69,7 +78,10 @@ void Application::handleInput()
         {
             case SDL_QUIT:
                 stopApp_ = true;
+                // TODO: clear stateStack
                 break;
+            default:
+                stateStack.handleEvent(event);
         }
     }
 }

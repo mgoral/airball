@@ -24,6 +24,7 @@
 #include <SDL2/SDL.h>
 
 #include "Logger.hpp"
+#include "Renderable.hpp"
 
 namespace airball
 {
@@ -51,6 +52,9 @@ public:
     Screen& operator=(const Screen&) = delete;
 
     void update() const;
+
+    void addRenderable(const Renderable& renderable, SDL_Rect* destination);
+    void clear();
 
 private:
     SDL_Window* initWindow(int width, int height, bool fullscreen);
