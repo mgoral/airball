@@ -31,7 +31,8 @@ namespace map
 class Tile : public Renderable
 {
 public:
-    explicit Tile(const std::string& imageName) : imageName_(imageName), obstacle_(false)
+    explicit Tile(const std::string& imageName) :
+        imageName_(imageName), obstacle_(false), stopsLight_(false)
     {
     }
 
@@ -45,14 +46,30 @@ public:
         return imageName_;
     }
 
+    void setObstacle(bool obstacle)
+    {
+        obstacle_ = obstacle;
+    }
+
     bool isObstacle() const
     {
         return obstacle_;
     }
 
+    void setStopLight(bool stopLight)
+    {
+        stopsLight_ = stopLight;
+    }
+
+    bool stopsLight() const
+    {
+        return stopsLight_;
+    }
+
 private:
     std::string imageName_;
     bool obstacle_;
+    bool stopsLight_;
 };
 
 } // namespace map
