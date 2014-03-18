@@ -32,7 +32,11 @@ enum LogCategory
     LogCategoryAudio = SDL_LOG_CATEGORY_AUDIO,
     LogCategoryVideo = SDL_LOG_CATEGORY_VIDEO,
     LogCategoryRender = SDL_LOG_CATEGORY_RENDER,
-    LogCategoryInput = SDL_LOG_CATEGORY_INPUT
+    LogCategoryInput = SDL_LOG_CATEGORY_INPUT,
+
+    // Custom categories
+    LogCategoryState = SDL_LOG_CATEGORY_CUSTOM,
+    LogCategoryMap
 };
 
 class Logger
