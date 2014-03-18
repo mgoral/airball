@@ -16,46 +16,29 @@
  *
  */
 
-#ifndef AIRBALL_STATES_GAMESTATE_HPP_
-#define AIRBALL_STATES_GAMESTATE_HPP_
-
-#include <vector>
-
 #include "EventHandler.hpp"
-#include "Logger.hpp"
-
-#include "IState.hpp"
-#include "GameStateActions.hpp"
-
-#include "map/Level.hpp"
 
 namespace airball
 {
-namespace states
+
+void EventHandler::registerAction(const KeyInfo& keyInfo, const std::shared_ptr<IAction>& action)
 {
+    actionMap_[keyInfo] = action;
+}
 
-class GameState : public IState
+void EventHandler::deregisterAction(const KeyInfo& keyInfo)
 {
-public:
-    GameState();
+    ActionMap::iterator actionIt = actionMap_.find(keyInfo);
+    if (actionIt != actionMap_.end())
+        actionMap_.erase(actionIt);
+}
 
-    void onEnter();
-    void onExit();
-    void onOverride();
-    void onResume();
+void EventHandler::runAction(const KeyInfo& keyInfo) const
+{
+    ActionMap::const_iterator actionIt = actionMap_.find(keyInfo);
+    if (actionIt != actionMap_.end())
+        actionIt->second->run();
 
-    void handleEvent(SDL_Event& event);
-    void update(StateStack& stack);
-    void draw(airball::Screen& screen);
+}
 
-private:
-    map::Level currentLevel_;  // TODO: there will be more than one level of course!
-    map::SharedCObjectPtr player_;
-    EventHandler eventHandler_;
-    Logger logger_;
-};
-
-} // namespace states
 } // namespace airball
-
-#endif // AIRBALL_STATES_GAMESTATE_HPP_

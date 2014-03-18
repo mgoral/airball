@@ -16,19 +16,20 @@
  *
  */
 
-
-
 #ifndef AIRBALL_MAP_COORDINATES_HPP_
 #define AIRBALL_MAP_COORDINATES_HPP_
+
+#include <initializer_list>
 
 namespace airball
 {
 namespace map
 {
 
-struct Coordinates
+class Coordinates
 {
-    Coordinates(unsigned x, unsigned y) : x(x), y(y)
+public:
+    Coordinates(int x, int y) : x(x), y(y)
     {
     }
 
@@ -47,8 +48,20 @@ struct Coordinates
         return ((lhs.x < rhs.x) || ((lhs.x == rhs.x) && (lhs.y < rhs.y)));
     }
 
-    unsigned x;
-    unsigned y;
+    friend Coordinates operator+(const Coordinates& lhs, const Coordinates& rhs)
+    {
+        Coordinates temp = { lhs.x + rhs.x, lhs.y + rhs.y };
+        return temp;
+    }
+
+    friend Coordinates operator-(const Coordinates& lhs, const Coordinates& rhs)
+    {
+        Coordinates temp = { lhs.x - rhs.x, lhs.y - rhs.y };
+        return temp;
+    }
+
+    int x;
+    int y;
 };
 
 } // namespace map

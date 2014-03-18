@@ -56,6 +56,17 @@ bool hasUuid(const Object& obj, unsigned uuid)
     return (obj.uuid() == uuid);
 }
 
+bool hasCoordinates(const Object& obj, const Coordinates& coord)
+{
+    return (obj.coordinates() == coord);
+}
+
+bool hasCoordinatesInRange(const Object& obj, const Coordinates& from, const Coordinates& to)
+{
+    const Coordinates& coord = obj.coordinates();
+    return (coord.x >= from.x && coord.y < to.x && coord.y >= from.y && coord.y < to.y);
+}
+
 } // namespace pred
 } // namespace map
 } // namespace airball

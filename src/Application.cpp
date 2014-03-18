@@ -79,6 +79,8 @@ void Application::handleInput(airball::states::StateStack& stateStack)
             case SDL_QUIT:
                 stopApp_ = true;
                 // TODO: clear stateStack
+                // maybe add it after main loop (i.e. when while (!stopApp_) finishes, call OnExit
+                // on all states and pop them
                 break;
             default:
                 stateStack.handleEvent(event);

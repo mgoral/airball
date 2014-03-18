@@ -54,7 +54,7 @@ public:
     std::vector<SharedCObjectPtr> objects() const;
     std::vector<SharedCObjectPtr> objectsAt(const Coordinates& coord) const;
     std::vector<SharedCObjectPtr> objectsAt(const Coordinates& from, const Coordinates& to) const;
-    std::vector<SharedCObjectPtr> findObjects(std::function<bool(const Object&)>) const;
+    std::vector<SharedCObjectPtr> findObjects(std::function<bool(const Object&)> pred) const;
 
     bool moveCreature(const Coordinates& from, const Coordinates& to);
 

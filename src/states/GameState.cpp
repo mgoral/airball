@@ -17,10 +17,14 @@
  */
 
 #include "detail/Utils.hpp"
+#include "detail/Translate.hpp"
 
 #include "GameState.hpp"
+#include "EventHandler.hpp"
 
 #include "map/ObjectProperties.hpp"
+
+#include <iostream>
 
 namespace airball
 {
@@ -36,12 +40,45 @@ map::ObjectProperties playerPropertiesFactory()
 }
 
 GameState::GameState() :
-    currentLevel_(200, 100)  // TODO: different (random?) level size
-    //player_(map::Coordinates(5,5), playerPropertiesFactory())
+    currentLevel_(200, 100),  // TODO: different (random?) level size
+    logger_(LogCategoryApplication)
 {
+    logger_.info(_("Initializing Airball"));
+
     // TODO: objects factory (with uuid assigner)
-    player_ = std::make_shared<map::Object>(map::Coordinates(50, 50), playerPropertiesFactory(), 0);
-    currentLevel_.addObject(player_);
+    map::Coordinates playerCoordinates(0, 0);
+    map::SharedCObjectPtr futurePlayer =
+        std::make_shared<map::Object>(playerCoordinates, playerPropertiesFactory(), 0);
+    if (currentLevel_.addObject(futurePlayer))
+    {
+        std::vector<map::SharedCObjectPtr> objects = currentLevel_.objectsAt(playerCoordinates);
+        player_ = objects[0];
+
+        eventHandler_.registerAction(
+            { KMOD_NONE, SDLK_h },
+            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(-1, 0)));
+        eventHandler_.registerAction(
+            { KMOD_NONE, SDLK_j },
+            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(0, 1)));
+        eventHandler_.registerAction(
+            { KMOD_NONE, SDLK_k },
+            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(0, -1)));
+        eventHandler_.registerAction(
+            { KMOD_NONE, SDLK_l },
+            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(1, 0)));
+        eventHandler_.registerAction(
+            { KMOD_NONE, SDLK_y },
+            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(-1, -1)));
+        eventHandler_.registerAction(
+            { KMOD_NONE, SDLK_u },
+            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(1, -1)));
+        eventHandler_.registerAction(
+            { KMOD_NONE, SDLK_b },
+            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(-1, 1)));
+        eventHandler_.registerAction(
+            { KMOD_NONE, SDLK_n },
+            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(1, 1)));
+    }
 }
 
 void GameState::onEnter()
@@ -60,10 +97,16 @@ void GameState::onResume()
 {
 }
 
-
 void GameState::handleEvent(SDL_Event& event)
 {
-    UNUSED_PARAM(event);
+    switch (event.type)
+    {
+        case SDL_KEYDOWN:
+            SDL_Keysym pressedKey = event.key.keysym;
+            KeyInfo keyInfo = { pressedKey.mod, pressedKey.sym };
+            eventHandler_.runAction(keyInfo);
+            break;
+    }
 }
 
 void GameState::update(StateStack& stack)
@@ -76,9 +119,9 @@ void GameState::draw(airball::Screen& screen)
     screen.clear();
 
     map::Coordinates wh = currentLevel_.dimensions();
-    for (unsigned x = 0; x < wh.x; ++x)
+    for (int x = 0; x < wh.x; ++x)
     {
-        for (unsigned y = 0; y < wh.y; ++y)
+        for (int y = 0; y < wh.y; ++y)
         {
             map::Coordinates coord(x, y);
             const map::Tile& tile = currentLevel_.tile(coord);
@@ -87,8 +130,8 @@ void GameState::draw(airball::Screen& screen)
                 // FIXME: remove that shitty Object::size()! Better hardcode it in screen or
                 // somewhere
                 SDL_Rect destination = {
-                    static_cast<int>(x),
-                    static_cast<int>(y),
+                    static_cast<int>(map::Object::size()) * x,
+                    static_cast<int>(map::Object::size()) * y,
                     static_cast<int>(map::Object::size()),
                     static_cast<int>(map::Object::size())
                 };
@@ -101,8 +144,8 @@ void GameState::draw(airball::Screen& screen)
     {
         map::Coordinates coord = object->coordinates();
         SDL_Rect destination = {
-            static_cast<int>(coord.x),
-            static_cast<int>(coord.y),
+            static_cast<int>(map::Object::size()) * coord.x,
+            static_cast<int>(map::Object::size()) * coord.y,
             static_cast<int>(map::Object::size()),
             static_cast<int>(map::Object::size())
         };

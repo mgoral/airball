@@ -94,6 +94,31 @@ std::vector<SharedCObjectPtr> Level::objects() const
     return ret;
 }
 
+std::vector<SharedCObjectPtr> Level::objectsAt(const Coordinates& coord) const
+{
+    using namespace std::placeholders;
+    std::function<bool(const Object&)> pred = std::bind(&pred::hasCoordinates, _1, coord);
+    return findObjects(pred);
+}
+
+std::vector<SharedCObjectPtr> Level::objectsAt(const Coordinates& from, const Coordinates& to) const
+{
+    using namespace std::placeholders;
+    std::function<bool(const Object&)> pred = std::bind(&pred::hasCoordinatesInRange, _1, from, to);
+    return findObjects(pred);
+}
+
+std::vector<SharedCObjectPtr> Level::findObjects(std::function<bool(const Object&)> pred) const
+{
+    std::vector<SharedCObjectPtr> ret;
+    for (const ObjectMap::value_type& val : objects_)
+    {
+        if (pred(*val.second))
+            ret.push_back(val.second);
+    }
+    return ret;
+}
+
 bool Level::objectCanBeAdded(const SharedCObjectPtr& obj, const Coordinates& coord) const
 {
     // Object cannot be added:
