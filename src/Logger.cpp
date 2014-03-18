@@ -20,6 +20,7 @@
 
 #include "Logger.hpp"
 
+#include "detail/Translate.hpp"
 #include "detail/Utils.hpp"
 
 namespace airball
@@ -28,12 +29,17 @@ namespace airball
 // initialize static Logger attribute
 bool Logger::initialized_ = false;
 
+Logger::Logger(LogCategory category) : category_(static_cast<int>(category))
+{
+    init();
+}
+
 void Logger::trace(const char* fmt, ...) const
 {
 #ifndef NDEBUG
     va_list argptr;
     va_start(argptr, fmt);
-    SDL_LogVerbose(category_, fmt, argptr);
+    SDL_LogMessageV(category_, SDL_LOG_PRIORITY_VERBOSE, fmt, argptr);
     va_end(argptr);
 #else
     UNUSED_PARAM(fmt);
@@ -45,7 +51,7 @@ void Logger::debug(const char* fmt, ...) const
 #ifndef NDEBUG
     va_list argptr;
     va_start(argptr, fmt);
-    SDL_LogDebug(category_, fmt, argptr);
+    SDL_LogMessageV(category_, SDL_LOG_PRIORITY_DEBUG, fmt, argptr);
     va_end(argptr);
 #else
     UNUSED_PARAM(fmt);
@@ -56,7 +62,7 @@ void Logger::info(const char* fmt, ...) const
 {
     va_list argptr;
     va_start(argptr, fmt);
-    SDL_LogInfo(category_, fmt, argptr);
+    SDL_LogMessageV(category_, SDL_LOG_PRIORITY_INFO, fmt, argptr);
     va_end(argptr);
 }
 
@@ -64,7 +70,7 @@ void Logger::warning(const char* fmt, ...) const
 {
     va_list argptr;
     va_start(argptr, fmt);
-    SDL_LogWarn(category_, fmt, argptr);
+    SDL_LogMessageV(category_, SDL_LOG_PRIORITY_WARN, fmt, argptr);
     va_end(argptr);
 }
 
@@ -72,7 +78,7 @@ void Logger::error(const char* fmt, ...) const
 {
     va_list argptr;
     va_start(argptr, fmt);
-    SDL_LogError(category_, fmt, argptr);
+    SDL_LogMessageV(category_, SDL_LOG_PRIORITY_ERROR, fmt, argptr);
     va_end(argptr);
 }
 
@@ -86,6 +92,7 @@ void Logger::init()
         SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
 #endif
         initialized_ = true;
+        SDL_LogDebug(LogCategoryApplication, _("Logging system initialized"));
     }
 }
 

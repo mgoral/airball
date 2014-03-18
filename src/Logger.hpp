@@ -38,10 +38,7 @@ enum LogCategory
 class Logger
 {
 public:
-    explicit Logger(LogCategory category) :
-        category_(static_cast<int>(category))
-    {
-    }
+    explicit Logger(LogCategory category);
 
     Logger(const Logger&) = delete;
     Logger& operator=(const Logger&) = delete;
@@ -53,6 +50,7 @@ public:
     void warning(const char* fmt, ...) const;
     void error(const char* fmt, ...) const;
 
+private:
     // Initialize default logs priority.
     static void init();
 

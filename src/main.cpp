@@ -36,8 +36,6 @@ int main()
 {
     std::set_terminate(&terminateHandler);
 
-    airball::Logger::init();
-
     try
     {
         airball::Application app;
