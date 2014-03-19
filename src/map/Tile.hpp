@@ -32,7 +32,7 @@ class Tile : public Renderable
 {
 public:
     explicit Tile(const std::string& imageName) :
-        imageName_(imageName), obstacle_(false), stopsLight_(false)
+        imageName_(imageName), obstacle_(false), stopsLight_(false), connector_(false, 0)
     {
     }
 
@@ -66,10 +66,22 @@ public:
         return stopsLight_;
     }
 
+    void setConnector(unsigned levelUuid)
+    {
+        if (!connector_.first)
+            connector_ = std::make_pair(true, levelUuid);
+    }
+
+    std::pair<bool, unsigned> connector() const
+    {
+        return connector_;
+    }
+
 private:
     std::string imageName_;
     bool obstacle_;
     bool stopsLight_;
+    std::pair<bool, unsigned> connector_; // true/false, levelUuid
 };
 
 } // namespace map

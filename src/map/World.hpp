@@ -16,45 +16,37 @@
  *
  */
 
-#ifndef AIRBALL_STATES_GAMESTATE_HPP_
-#define AIRBALL_STATES_GAMESTATE_HPP_
+#ifndef AIRBALL_MAP_WORLD_HPP_
+#define AIRBALL_MAP_WORLD_HPP_
 
 #include <vector>
 
-#include "EventHandler.hpp"
-#include "Logger.hpp"
-
-#include "IState.hpp"
-#include "GameStateActions.hpp"
-
-#include "map/World.hpp"
+#include "Level.hpp"
 
 namespace airball
 {
-namespace states
+namespace map
 {
 
-class GameState : public IState
+class World
 {
 public:
-    GameState();
+    World();
 
-    void onEnter();
-    void onExit();
-    void onOverride();
-    void onResume();
+    Level& createLevel();
+    Level& currentLevel();
+    void changeCurrentLevel(const Level& level);
+    Level& level(unsigned uuid);
 
-    void handleEvent(SDL_Event& event);
-    void update(StateStack& stack);
-    void draw(airball::Screen& screen);
+    SharedCObjectPtr player() const;
 
 private:
-    map::World world_;
-    EventHandler eventHandler_;
-    Logger logger_;
+    std::vector<Level> levels_;
+    unsigned currentLevelUuid_;
+    SharedCObjectPtr player_;
 };
 
-} // namespace states
+} // namespace map
 } // namespace airball
 
-#endif // AIRBALL_STATES_GAMESTATE_HPP_
+#endif // AIRBALL_MAP_WORLD_HPP_

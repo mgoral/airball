@@ -21,6 +21,7 @@
 
 #include "IAction.hpp"
 
+#include "map/World.hpp"
 #include "map/Level.hpp"
 #include "map/Object.hpp"
 #include "map/Coordinates.hpp"
@@ -33,28 +34,29 @@ namespace states
 class MoveAction : public IAction
 {
 public:
-    MoveAction(map::Level& level, map::SharedCObjectPtr& player,
-        const map::Coordinates& direction) :
-            level_(level), player_(player), direction_(direction)
+    MoveAction(map::World& world, map::SharedCObjectPtr object, const map::Coordinates& direction) :
+        world_(world), object_(object), direction_(direction)
     {
     }
 
     void run()
     {
-        map::Coordinates destination = player_->coordinates() + direction_;
-        map::Coordinates dimensions = level_.dimensions();
+        map::Level& level = world_.currentLevel();
+
+        map::Coordinates destination = object_->coordinates() + direction_;
+        map::Coordinates dimensions = level.dimensions();
 
         destination.x = std::max(0, destination.x);
         destination.x = std::min(dimensions.x - 1, destination.x);
         destination.y = std::max(0, destination.y);
         destination.y = std::min(dimensions.y - 1, destination.y);
 
-        level_.moveObject(player_, destination);
+        level.moveObject(object_, destination);
     }
 
 private:
-    map::Level& level_;
-    map::SharedCObjectPtr player_;
+    map::World& world_;
+    map::SharedCObjectPtr object_;
     map::Coordinates direction_;
 };
 

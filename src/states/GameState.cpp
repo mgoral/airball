@@ -22,63 +22,42 @@
 #include "GameState.hpp"
 #include "EventHandler.hpp"
 
-#include "map/ObjectProperties.hpp"
-
-#include <iostream>
+#include "map/Level.hpp"
 
 namespace airball
 {
 namespace states
 {
 
-map::ObjectProperties playerPropertiesFactory()
-{
-    map::ObjectProperties prop;
-    prop.image = "player.png";
-
-    return prop;
-}
-
 GameState::GameState() :
-    currentLevel_(200, 100),  // TODO: different (random?) level size
-    logger_(LogCategoryApplication)
+    world_(), logger_(LogCategoryApplication)
 {
     logger_.info(_("Initializing Airball"));
 
-    // TODO: objects factory (with uuid assigner)
-    map::Coordinates playerCoordinates(0, 0);
-    map::SharedCObjectPtr futurePlayer =
-        std::make_shared<map::Object>(playerCoordinates, playerPropertiesFactory(), 0);
-    if (currentLevel_.addObject(futurePlayer))
-    {
-        std::vector<map::SharedCObjectPtr> objects = currentLevel_.objectsAt(playerCoordinates);
-        player_ = objects[0];
-
-        eventHandler_.registerAction(
-            { KMOD_NONE, SDLK_h },
-            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(-1, 0)));
-        eventHandler_.registerAction(
-            { KMOD_NONE, SDLK_j },
-            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(0, 1)));
-        eventHandler_.registerAction(
-            { KMOD_NONE, SDLK_k },
-            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(0, -1)));
-        eventHandler_.registerAction(
-            { KMOD_NONE, SDLK_l },
-            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(1, 0)));
-        eventHandler_.registerAction(
-            { KMOD_NONE, SDLK_y },
-            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(-1, -1)));
-        eventHandler_.registerAction(
-            { KMOD_NONE, SDLK_u },
-            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(1, -1)));
-        eventHandler_.registerAction(
-            { KMOD_NONE, SDLK_b },
-            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(-1, 1)));
-        eventHandler_.registerAction(
-            { KMOD_NONE, SDLK_n },
-            std::make_shared<MoveAction>(currentLevel_, player_, map::Coordinates(1, 1)));
-    }
+    eventHandler_.registerAction(
+        { KMOD_NONE, SDLK_h },
+        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(-1, 0)));
+    eventHandler_.registerAction(
+        { KMOD_NONE, SDLK_j },
+        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(0, 1)));
+    eventHandler_.registerAction(
+        { KMOD_NONE, SDLK_k },
+        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(0, -1)));
+    eventHandler_.registerAction(
+        { KMOD_NONE, SDLK_l },
+        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(1, 0)));
+    eventHandler_.registerAction(
+        { KMOD_NONE, SDLK_y },
+        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(-1, -1)));
+    eventHandler_.registerAction(
+        { KMOD_NONE, SDLK_u },
+        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(1, -1)));
+    eventHandler_.registerAction(
+        { KMOD_NONE, SDLK_b },
+        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(-1, 1)));
+    eventHandler_.registerAction(
+        { KMOD_NONE, SDLK_n },
+        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(1, 1)));
 }
 
 void GameState::onEnter()
@@ -118,13 +97,15 @@ void GameState::draw(airball::Screen& screen)
 {
     screen.clear();
 
-    map::Coordinates wh = currentLevel_.dimensions();
+    map::Level& currentLevel = world_.currentLevel();
+
+    map::Coordinates wh = currentLevel.dimensions();
     for (int x = 0; x < wh.x; ++x)
     {
         for (int y = 0; y < wh.y; ++y)
         {
             map::Coordinates coord(x, y);
-            const map::Tile& tile = currentLevel_.tile(coord);
+            const map::Tile& tile = currentLevel.tile(coord);
             if (tile.imageName() != "empty")
             {
                 // FIXME: remove that shitty Object::size()! Better hardcode it in screen or
@@ -140,7 +121,7 @@ void GameState::draw(airball::Screen& screen)
         }
     }
 
-    for (const map::SharedCObjectPtr& object : currentLevel_.objects())
+    for (const map::SharedCObjectPtr& object : currentLevel.objects())
     {
         map::Coordinates coord = object->coordinates();
         SDL_Rect destination = {

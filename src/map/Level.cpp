@@ -33,6 +33,11 @@ Level::Level(unsigned width, unsigned height, unsigned uuid) :
 {
 }
 
+unsigned Level::uuid() const
+{
+    return uuid_;
+}
+
 Coordinates Level::dimensions() const
 {
     return Coordinates(width_, height_);
@@ -81,6 +86,9 @@ void Level::removeObject(const SharedCObjectPtr& object)
 
 void Level::moveObject(const SharedCObjectPtr& object, const Coordinates& dest)
 {
+    if (object->coordinates() == dest)
+        return;
+
     if (objectCanBeAdded(object, dest))
     {
         ObjectMap::const_iterator searchIt = findObject(object);

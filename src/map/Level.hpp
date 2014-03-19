@@ -40,6 +40,8 @@ public:
 
     Level(unsigned width, unsigned height, unsigned uuid = 0);
 
+    unsigned uuid() const;
+
     Coordinates dimensions() const;
     const Tile& tile(const Coordinates& coord) const;
 
