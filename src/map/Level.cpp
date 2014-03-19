@@ -96,16 +96,27 @@ std::vector<SharedCObjectPtr> Level::objects() const
 
 std::vector<SharedCObjectPtr> Level::objectsAt(const Coordinates& coord) const
 {
-    using namespace std::placeholders;
-    std::function<bool(const Object&)> pred = std::bind(&pred::hasCoordinates, _1, coord);
-    return findObjects(pred);
+    std::vector<SharedCObjectPtr> ret;
+    std::pair<ObjectMap::const_iterator, ObjectMap::const_iterator> boundaries =
+        objects_.equal_range(coord);
+
+    std::transform(boundaries.first, boundaries.second, std::back_inserter(ret),
+        [](const ObjectMap::value_type& val) { return val.second; });
+
+    return ret;
 }
 
 std::vector<SharedCObjectPtr> Level::objectsAt(const Coordinates& from, const Coordinates& to) const
 {
-    using namespace std::placeholders;
-    std::function<bool(const Object&)> pred = std::bind(&pred::hasCoordinatesInRange, _1, from, to);
-    return findObjects(pred);
+    std::vector<SharedCObjectPtr> ret;
+
+    ObjectMap::const_iterator fromIt = objects_.lower_bound(from);
+    ObjectMap::const_iterator toIt = objects_.upper_bound(to);
+
+    std::transform(fromIt, toIt, std::back_inserter(ret),
+        [](const ObjectMap::value_type& val) { return val.second; });
+
+    return ret;
 }
 
 std::vector<SharedCObjectPtr> Level::findObjects(std::function<bool(const Object&)> pred) const

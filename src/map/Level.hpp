@@ -47,10 +47,13 @@ public:
     void removeObject(const SharedCObjectPtr& object);
     void moveObject(const SharedCObjectPtr& object, const Coordinates& dest);
 
-    //void transform(std::function<void(Object&)> func);
-    //void transformAt(const Coordinates& coord, std::function<void(Object&)> func);
-
-    // TODO: implementation
+    /**
+     * Access stored objects:
+     *   + all objects
+     *   + at given coordinates
+     *   + at coordinates meeting criteria: from <= coordinates < to
+     *   + all objects meeting a given predicate
+     */
     std::vector<SharedCObjectPtr> objects() const;
     std::vector<SharedCObjectPtr> objectsAt(const Coordinates& coord) const;
     std::vector<SharedCObjectPtr> objectsAt(const Coordinates& from, const Coordinates& to) const;
