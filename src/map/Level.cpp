@@ -54,6 +54,15 @@ bool Level::addObject(const SharedCObjectPtr& object)
     return false;
 }
 
+void Level::updateObject(const SharedCObjectPtr& object)
+{
+    ObjectMap::iterator searchIt = findObject(object);
+    if (searchIt != objects_.end())
+    {
+        searchIt->second = std::move(object->clone());
+    }
+}
+
 void Level::removeObject(const SharedCObjectPtr& object)
 {
     std::pair<ObjectMap::iterator, ObjectMap::iterator> boundaries =
@@ -154,20 +163,31 @@ bool Level::objectCanBeAdded(const SharedCObjectPtr& obj, const Coordinates& coo
     return false;
 }
 
+Level::ObjectMap::iterator Level::findObject(const SharedCObjectPtr& object)
+{
+    return findObjectImpl<ObjectMap::iterator>(this, object);
+}
+
 Level::ObjectMap::const_iterator Level::findObject(const SharedCObjectPtr& object) const
+{
+    return findObjectImpl<ObjectMap::const_iterator>(this, object);
+}
+
+// Yeah, I hate code duplication THAT much :)
+template <typename Iterator, typename T>
+Iterator Level::findObjectImpl(T This, const SharedCObjectPtr& object)
 {
     using namespace std::placeholders;
 
-    std::pair<ObjectMap::const_iterator, ObjectMap::const_iterator> boundaries =
-        objects_.equal_range(object->coordinates());
+    std::pair<Iterator, Iterator> boundaries = This->objects_.equal_range(object->coordinates());
 
-    ObjectMap::const_iterator searchIt = std::find_if(boundaries.first, boundaries.second,
+    Iterator searchIt = std::find_if(boundaries.first, boundaries.second,
         [&](const ObjectMap::value_type& val) -> bool
         { return pred::hasUuid(*val.second, object->uuid()); });
 
     // Callers of this method do not know anything about boundaries
     if (searchIt == boundaries.second)
-        return objects_.end();
+        return This->objects_.end();
     return searchIt;
 }
 

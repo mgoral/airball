@@ -44,6 +44,7 @@ public:
     const Tile& tile(const Coordinates& coord) const;
 
     bool addObject(const SharedCObjectPtr& object);
+    void updateObject(const SharedCObjectPtr& object);
     void removeObject(const SharedCObjectPtr& object);
     void moveObject(const SharedCObjectPtr& object, const Coordinates& dest);
 
@@ -59,8 +60,6 @@ public:
     std::vector<SharedCObjectPtr> objectsAt(const Coordinates& from, const Coordinates& to) const;
     std::vector<SharedCObjectPtr> findObjects(std::function<bool(const Object&)> pred) const;
 
-    bool moveCreature(const Coordinates& from, const Coordinates& to);
-
     friend bool operator==(const Level& lhs, const Level& rhs)
     {
         return (lhs.uuid_ == rhs.uuid_);
@@ -73,7 +72,11 @@ public:
 
 private:
     bool objectCanBeAdded(const SharedCObjectPtr& obj, const Coordinates& coord) const;
+    ObjectMap::iterator findObject(const SharedCObjectPtr& object);
     ObjectMap::const_iterator findObject(const SharedCObjectPtr& object) const;
+
+    template <typename Iterator, typename T>
+    static Iterator findObjectImpl(T This, const SharedCObjectPtr& object);
 
 private:
     unsigned width_;
