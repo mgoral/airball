@@ -18,8 +18,8 @@
 
 #include <gtest/gtest.h>
 
-#include "objects/Coordinates.hpp"
-#include "objects/Object.hpp"
+#include "map/Coordinates.hpp"
+#include "map/Object.hpp"
 
 class ObjectTests : public ::testing::Test
 {

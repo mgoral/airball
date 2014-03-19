@@ -15,10 +15,17 @@ include_directories(
     ${AIRBALL_SRC_DIR}
 )
 
-file(GLOB_RECURSE AIRBALL_TESTS_SOURCESS 
-    ${AIRBALL_SRC_DIR}/objects/*.cpp
+file(GLOB_RECURSE AIRBALL_TESTS_SOURCESS
+    ${AIRBALL_SRC_DIR}/map/*.cpp
     ${AIRBALL_SRC_DIR}/states/*.cpp
+
+    # Selective files compiling. Remember to not add main.cpp!
+    ${AIRBALL_SRC_DIR}/EventHandler.cpp
+    ${AIRBALL_SRC_DIR}/Logger.cpp
     ${AIRBALL_SRC_DIR}/Renderable.cpp
+    ${AIRBALL_SRC_DIR}/Resources.cpp
+    ${AIRBALL_SRC_DIR}/Screen.cpp
+
     *.cpp)
 set(AIRBALL_TESTS_BIN ${PROJECT_NAME}_ut)
 

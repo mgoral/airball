@@ -35,7 +35,9 @@ public:
     MOCK_METHOD0(onExit, void());
     MOCK_METHOD0(onOverride, void());
     MOCK_METHOD0(onResume, void());
+    MOCK_METHOD1(handleEvent, void(SDL_Event&));
     MOCK_METHOD1(update, void(airball::states::StateStack&));
+    MOCK_METHOD1(draw, void(airball::Screen&));
 };
 
 class IStateMockProxy : public airball::states::IState
@@ -60,6 +62,11 @@ public:
         storedMock.onOverride();
     }
 
+    void handleEvent(SDL_Event& event)
+    {
+        storedMock.handleEvent(event);
+    }
+
     void onResume()
     {
         storedMock.onResume();
@@ -68,6 +75,11 @@ public:
     void update(airball::states::StateStack& stack)
     {
         storedMock.update(stack);
+    }
+
+    void draw(airball::Screen& screen)
+    {
+        storedMock.draw(screen);
     }
 
 private:

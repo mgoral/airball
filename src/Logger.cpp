@@ -92,7 +92,6 @@ void Logger::init()
         SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
 #endif
         initialized_ = true;
-        SDL_LogDebug(LogCategoryApplication, _("Logging system initialized"));
     }
 }
 

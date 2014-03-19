@@ -86,8 +86,7 @@ TEST_F(StateStackTests, SingleUpdateUpdatesOnlyTopState)
 TEST_F(StateStackTests, OnlyTopStateIsPopped)
 {
     stateStack_.push(std::move(mockProxy_));
-    EXPECT_CALL(stateMock_, onEnter()).Times(1);
-
+    EXPECT_CALL(stateMock_, onEnter()).Times(1); 
     stateStack_.push(std::move(mockProxy2_));
     EXPECT_CALL(stateMock_, onOverride()).Times(1);
     EXPECT_CALL(stateMock2_, onEnter()).Times(1);
