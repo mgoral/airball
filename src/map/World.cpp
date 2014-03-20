@@ -16,6 +16,8 @@
  *
  */
 
+#include <stdexcept>
+
 #include "World.hpp"
 
 namespace airball

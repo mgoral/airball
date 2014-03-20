@@ -16,35 +16,35 @@
  *
  */
 
-#ifndef AIRBALL_STATES_GAMESTATEACTIONS_HPP_
-#define AIRBALL_STATES_GAMESTATEACTIONS_HPP_
+#ifndef AIRBALL_MAP_ACTIONS_HPP
+#define AIRBALL_MAP_ACTIONS_HPP
 
 #include "IAction.hpp"
 
-#include "map/World.hpp"
-#include "map/Level.hpp"
-#include "map/Object.hpp"
-#include "map/Coordinates.hpp"
+#include "World.hpp"
+#include "Level.hpp"
+#include "Object.hpp"
+#include "Coordinates.hpp"
 
 namespace airball
 {
-namespace states
+namespace map
 {
 
 class MoveAction : public IAction
 {
 public:
-    MoveAction(map::World& world, map::SharedCObjectPtr object, const map::Coordinates& direction) :
+    MoveAction(World& world, SharedCObjectPtr object, const Coordinates& direction) :
         world_(world), object_(object), direction_(direction)
     {
     }
 
     void run()
     {
-        map::Level& level = world_.currentLevel();
+        Level& level = world_.currentLevel();
 
-        map::Coordinates destination = object_->coordinates() + direction_;
-        map::Coordinates dimensions = level.dimensions();
+        Coordinates destination = object_->coordinates() + direction_;
+        Coordinates dimensions = level.dimensions();
 
         destination.x = std::max(0, destination.x);
         destination.x = std::min(dimensions.x - 1, destination.x);
@@ -55,12 +55,12 @@ public:
     }
 
 private:
-    map::World& world_;
-    map::SharedCObjectPtr object_;
-    map::Coordinates direction_;
+    World& world_;
+    SharedCObjectPtr object_;
+    Coordinates direction_;
 };
 
-} // namespace states
+} // namespace map
 } // namespace airball
 
-#endif // AIRBALL_STATES_GAMESTATEACTIONS_HPP_
+#endif // AIRBALL_MAP_ACTIONS_HPP

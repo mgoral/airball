@@ -23,6 +23,7 @@
 #include "EventHandler.hpp"
 
 #include "map/Level.hpp"
+#include "map/Actions.hpp"
 
 namespace airball
 {
@@ -36,28 +37,28 @@ GameState::GameState() :
 
     eventHandler_.registerAction(
         { KMOD_NONE, SDLK_h },
-        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(-1, 0)));
+        std::make_shared<map::MoveAction>(world_, world_.player(), map::Coordinates(-1, 0)));
     eventHandler_.registerAction(
         { KMOD_NONE, SDLK_j },
-        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(0, 1)));
+        std::make_shared<map::MoveAction>(world_, world_.player(), map::Coordinates(0, 1)));
     eventHandler_.registerAction(
         { KMOD_NONE, SDLK_k },
-        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(0, -1)));
+        std::make_shared<map::MoveAction>(world_, world_.player(), map::Coordinates(0, -1)));
     eventHandler_.registerAction(
         { KMOD_NONE, SDLK_l },
-        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(1, 0)));
+        std::make_shared<map::MoveAction>(world_, world_.player(), map::Coordinates(1, 0)));
     eventHandler_.registerAction(
         { KMOD_NONE, SDLK_y },
-        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(-1, -1)));
+        std::make_shared<map::MoveAction>(world_, world_.player(), map::Coordinates(-1, -1)));
     eventHandler_.registerAction(
         { KMOD_NONE, SDLK_u },
-        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(1, -1)));
+        std::make_shared<map::MoveAction>(world_, world_.player(), map::Coordinates(1, -1)));
     eventHandler_.registerAction(
         { KMOD_NONE, SDLK_b },
-        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(-1, 1)));
+        std::make_shared<map::MoveAction>(world_, world_.player(), map::Coordinates(-1, 1)));
     eventHandler_.registerAction(
         { KMOD_NONE, SDLK_n },
-        std::make_shared<MoveAction>(world_, world_.player(), map::Coordinates(1, 1)));
+        std::make_shared<map::MoveAction>(world_, world_.player(), map::Coordinates(1, 1)));
 }
 
 void GameState::onEnter()

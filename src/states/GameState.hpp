@@ -25,7 +25,6 @@
 #include "Logger.hpp"
 
 #include "IState.hpp"
-#include "GameStateActions.hpp"
 
 #include "map/World.hpp"
 
