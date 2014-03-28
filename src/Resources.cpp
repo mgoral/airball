@@ -29,26 +29,26 @@ std::string Resources::pathSep_ = "\\";
 std::string Resources::pathSep_ = "/";
 #endif
 
-Resources::ResourceList Resources::resources_ =
-{
-    {"player.png", nullptr},
-    {"wall.png", nullptr},
-};
-
+// Initialization of static member
 std::mutex Resources::resourcesMutex_;
+
+Resources::ResourceList Resources::resources_;
 
 SDL_Texture* Resources::getImage(const std::string& imageName, SDL_Renderer* renderer)
 {
     std::lock_guard<std::mutex> lock(resourcesMutex_);
 
-    ResourceList::iterator imageIt = resources_.find(imageName);
-    if (imageIt != resources_.end())
+
+    std::pair<ResourceList::iterator, bool> emplaceRet =
+        resources_.emplace(std::make_pair(imageName, nullptr));
+
+    ResourceList::iterator imageIt = emplaceRet.first;
+    if (emplaceRet.second)
     {
         loadImage(imageIt, renderer);
-        return imageIt->second;
     }
 
-    return nullptr;
+    return imageIt->second;
 }
 
 std::string Resources::getImagePath(const std::string& imageName)
@@ -60,7 +60,7 @@ void Resources::loadImage(const ResourceList::iterator& imageIt, SDL_Renderer* r
 {
     if (imageIt->second == nullptr)
     {
-        std::string imagePath = getResourcesRootDir() + pathSep_ + imageIt->first;
+        std::string imagePath = getImagePath(imageIt->first);
         SDL_Surface* surface = IMG_Load(imagePath.c_str());
         imageIt->second = SDL_CreateTextureFromSurface(renderer, surface);
         SDL_FreeSurface(surface);
