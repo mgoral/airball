@@ -13,6 +13,8 @@ include_directories(
 
     ${AIRBALL_TESTS_DIR}
     ${AIRBALL_SRC_DIR}
+
+    ${Boost_INCLUDE_DIRS}
 )
 
 file(GLOB_RECURSE AIRBALL_TESTS_SOURCESS
@@ -36,6 +38,9 @@ target_link_libraries(
     # First link test environment
     gmock
     gtest
+
+    # Additional libraries
+    ${Boost_LIBRARIES}
 )
 
 add_custom_target(

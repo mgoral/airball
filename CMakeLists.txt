@@ -14,6 +14,7 @@ include(FindPkgConfig)
 
 # Required packages
 find_package(Gettext REQUIRED)
+find_package(Boost 1.41.0 REQUIRED)
 pkg_search_module(SDL2 REQUIRED sdl2)
 pkg_search_module(SDL2_IMAGE REQUIRED SDL2_image)
 

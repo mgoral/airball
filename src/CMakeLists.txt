@@ -8,6 +8,7 @@ include_directories(
 
     # Headers for used libraries
     ${GETTEXT_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIRS}
     ${SDL2_INCLUDE_DIR}
 )
 
@@ -24,6 +25,7 @@ target_link_libraries(
 
     # used libraries
     ${GETTEXT_LIBRARIES}
+    ${Boost_LIBRARIES}
     ${SDL2_LIBRARIES}
     ${SDL2_IMAGE_LIBRARIES}
 )
