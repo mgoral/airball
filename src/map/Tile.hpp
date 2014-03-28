@@ -20,6 +20,7 @@
 #define AIRBALL_MAP_TILE_HPP_
 
 #include <string>
+#include <boost/optional.hpp>
 
 #include "Renderable.hpp"
 
@@ -28,11 +29,21 @@ namespace airball
 namespace map
 {
 
+struct Connector
+{
+    Connector(const Coordinates& coord, unsigned levelUuid) : coord(coord), levelUuid(levelUuid)
+    {
+    }
+
+    Coordinates coord;
+    unsigned levelUuid;
+};
+
 class Tile : public Renderable
 {
 public:
     explicit Tile(const std::string& imageName) :
-        imageName_(imageName), obstacle_(false), stopsLight_(false), connector_(false, 0)
+        imageName_(imageName), obstacle_(false), stopsLight_(false)
     {
     }
 
@@ -66,13 +77,13 @@ public:
         return stopsLight_;
     }
 
-    void setConnector(unsigned levelUuid)
+    void setConnector(const Connector& connector)
     {
-        if (!connector_.first)
-            connector_ = std::make_pair(true, levelUuid);
+        if (!connector_)
+            connector_ = connector;
     }
 
-    std::pair<bool, unsigned> connector() const
+    boost::optional<Connector> connector() const
     {
         return connector_;
     }
@@ -81,7 +92,7 @@ private:
     std::string imageName_;
     bool obstacle_;
     bool stopsLight_;
-    std::pair<bool, unsigned> connector_; // true/false, levelUuid
+    boost::optional<Connector> connector_;
 };
 
 } // namespace map
