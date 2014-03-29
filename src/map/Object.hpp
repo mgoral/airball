@@ -24,6 +24,7 @@
 #include "Renderable.hpp"
 #include "Coordinates.hpp"
 #include "ObjectProperties.hpp"
+#include "Animation.hpp"
 
 
 namespace airball
@@ -50,6 +51,8 @@ public:
 
     std::string imageName() const;
 
+    Animation& getAnimation() const;
+
     Coordinates coordinates() const;
     void changeCoordinates(const Coordinates& coord);
     bool isNeighbour(const Object& other) const;
@@ -64,9 +67,17 @@ public:
     }
 
 private:
+    void setMovementAnimation(const Coordinates& to);
+
+private:
     Coordinates coord_;
     ObjectProperties properties_;
     unsigned uuid_;
+
+    // Animation affects only visual appearance of Object and is not very important from any point
+    // of view, so we'll make it mutable to easily pass to Screen::addAnimatedRenderable. 
+    // It's a little dirty hack though, no matter how we'll try to excuse it.
+    mutable Animation animation_;
 };
 
 } // namespace map

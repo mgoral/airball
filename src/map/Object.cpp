@@ -30,8 +30,10 @@ namespace map
  */
 
 Object::Object(const Coordinates& coord, const ObjectProperties& properties, unsigned uuid) :
-    coord_(coord), properties_(properties), uuid_(uuid)
+    coord_(coord), properties_(properties), uuid_(uuid), animation_(8)
 {
+    // Init animation.
+    setMovementAnimation(coord_);
 }
 
 SharedObjectPtr Object::clone() const
@@ -49,6 +51,11 @@ std::string Object::imageName() const
     return properties_.image;
 }
 
+Animation& Object::getAnimation() const
+{
+    return animation_;
+}
+
 Coordinates Object::coordinates() const
 {
     return coord_;
@@ -63,6 +70,7 @@ bool Object::isNeighbour(const Object& other) const
 
 void Object::changeCoordinates(const Coordinates& coord)
 {
+    setMovementAnimation(coord);
     coord_ = coord;
 }
 
@@ -79,6 +87,27 @@ const ObjectProperties& Object::properties() const
 unsigned Object::uuid() const
 {
     return uuid_;
+}
+
+void Object::setMovementAnimation(const Coordinates& to)
+{
+    SDL_Rect source = {
+        static_cast<int>(map::Object::size()) * coord_.x,
+        static_cast<int>(map::Object::size()) * coord_.y,
+        static_cast<int>(map::Object::size()),
+        static_cast<int>(map::Object::size())
+    };
+
+    SDL_Rect destination = {
+        static_cast<int>(map::Object::size()) * to.x,
+        static_cast<int>(map::Object::size()) * to.y,
+        static_cast<int>(map::Object::size()),
+        static_cast<int>(map::Object::size())
+    };
+
+    animation_.reset();
+    animation_.setMovementSource(source);
+    animation_.setMovementDestination(destination);
 }
 
 } // namespace map

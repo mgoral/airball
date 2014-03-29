@@ -88,6 +88,15 @@ void Screen::addRenderable(const Renderable& renderable, SDL_Rect* destination)
     SDL_RenderCopy(renderer_, texture, renderable.getImagePart(), destination);
 }
 
+void Screen::addAnimatedRenderable(const Renderable& renderable, Animation& animation)
+{
+    SDL_Texture* texture = Resources::getImage(renderable.imageName(), renderer_);
+
+    SDL_Rect position = animation.position();
+    SDL_RenderCopy(renderer_, texture, animation.frame(), &position);
+    ++animation;
+}
+
 void Screen::clear()
 {
     SDL_RenderClear(renderer_);

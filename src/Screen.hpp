@@ -25,6 +25,7 @@
 
 #include "Logger.hpp"
 #include "Renderable.hpp"
+#include "Animation.hpp"
 
 namespace airball
 {
@@ -54,6 +55,7 @@ public:
     void update() const;
 
     void addRenderable(const Renderable& renderable, SDL_Rect* destination);
+    void addAnimatedRenderable(const Renderable& renderable, Animation& animation);
     void clear();
 
 private:
