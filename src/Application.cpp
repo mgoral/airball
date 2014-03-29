@@ -16,6 +16,7 @@
  *
  */
 
+#include <iostream>
 #include <thread>
 #include <chrono>
 #include <memory>
@@ -58,21 +59,57 @@ int Application::run()
     std::unique_ptr<states::IState> initialState(new states::GameState());
     stateStack.push(std::move(initialState));
 
+    const unsigned fpsCap = 60; // TODO: read from config file
+    const unsigned maxFrameSkip = 10;
+
+    std::chrono::nanoseconds timePerUpdate(1000000000 / fpsCap);
+    std::chrono::nanoseconds lag(0);
+    auto previousTime = std::chrono::system_clock::now();
+
+    bool saveCpu = true; // TODO: read from config file
+    unsigned loopCount = 0;
+
+    // We will render as fast as possible, but the game will be updated only 'fpsCap' times per
+    // second. We can also sleep (if we have time for that) to reduce CPU usage.
     while (!stopApp_)
     {
-        handleInput(stateStack);
-        stateStack.update();
+        auto currentTime = std::chrono::system_clock::now();
+        auto elapsedTime = currentTime - previousTime;
+        previousTime = currentTime;
+        lag += std::chrono::duration_cast<std::chrono::nanoseconds>(elapsedTime);
+
+        loopCount = 0;
+        while (lag >= timePerUpdate && loopCount < maxFrameSkip)
+        {
+            handleInput(stateStack);
+            stateStack.update();
+            lag -= timePerUpdate;
+            ++loopCount;
+        }
+
+        // TODO: add interpolation -- screen.setInterpolation(interpolation); (useful during
+        // animations.
+        // If object has set Animation (new class consisting vector of Frames), then Screen should
+        // display instead its Animation
+        // http://www.koonsolo.com/news/dewitters-gameloop/
+
         stateStack.draw(screen);
-        std::this_thread::sleep_for(std::chrono::milliseconds(30));  // FIXME: temporary solution
+
+        // Sleep for a certain amount of time in case we want to save CPU usage.
+        // Note that in fact it takes into consideration previous frame, not the current one.
+        if (saveCpu && elapsedTime < timePerUpdate)
+        {
+            std::this_thread::sleep_for(timePerUpdate - elapsedTime);
+        }
     }
 
-    return 0;
+    return 0; // end of program, in fact
 }
 
 void Application::handleInput(airball::states::StateStack& stateStack)
 {
     SDL_Event event;
-    if (SDL_PollEvent(&event))
+    while (SDL_PollEvent(&event))
     {
         switch (event.type)
         {
