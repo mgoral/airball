@@ -64,7 +64,6 @@ public:
     }
 
 private:
-    static unsigned size_;
     Coordinates coord_;
     ObjectProperties properties_;
     unsigned uuid_;

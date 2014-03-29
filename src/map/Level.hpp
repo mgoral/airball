@@ -24,6 +24,7 @@
 #include <memory>
 #include <functional>
 
+#include "LayoutGenerator.hpp"
 #include "Coordinates.hpp"
 #include "Object.hpp"
 #include "Tile.hpp"
@@ -39,6 +40,7 @@ public:
     typedef std::multimap<Coordinates, SharedObjectPtr> ObjectMap;
 
     Level(unsigned width, unsigned height, unsigned uuid = 0);
+    Level(unsigned width, unsigned height, LevelLayout&& layout, unsigned uuid = 0);
 
     unsigned uuid() const;
 
@@ -85,7 +87,7 @@ private:
     unsigned height_;
     unsigned uuid_;
 
-    std::vector<std::vector<Tile> > layout_;
+    LevelLayout layout_;
     ObjectMap objects_;
 };
 

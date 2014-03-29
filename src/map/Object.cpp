@@ -25,8 +25,6 @@ namespace airball
 namespace map
 {
 
-unsigned Object::size_ = 32;
-
 /*
  * Object
  */
@@ -43,7 +41,7 @@ SharedObjectPtr Object::clone() const
 
 unsigned Object::size()
 {
-    return size_;
+    return 32;
 }
 
 std::string Object::imageName() const

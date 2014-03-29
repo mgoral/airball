@@ -107,7 +107,7 @@ void GameState::draw(airball::Screen& screen)
         {
             map::Coordinates coord(x, y);
             const map::Tile& tile = currentLevel.tile(coord);
-            if (tile.imageName() != "empty")
+            if (tile.imageName() != "none.png")
             {
                 // FIXME: remove that shitty Object::size()! Better hardcode it in screen or
                 // somewhere

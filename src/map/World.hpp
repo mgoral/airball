@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "Level.hpp"
+#include "LayoutGenerator.hpp"
 
 namespace airball
 {
@@ -33,7 +34,10 @@ class World
 public:
     World();
 
-    Level& createLevel();
+    /**
+     * Returns a randomly picked non-obstacle coordinates on created level
+     */
+    Coordinates createLevel();
     Level& currentLevel();
     void changeCurrentLevel(const Level& level);
     Level& level(unsigned uuid);
@@ -44,6 +48,7 @@ private:
     std::vector<Level> levels_;
     unsigned currentLevelUuid_;
     SharedCObjectPtr player_;
+    LayoutGenerator generator_;
 };
 
 } // namespace map

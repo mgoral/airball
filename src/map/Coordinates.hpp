@@ -54,10 +54,24 @@ public:
         return temp;
     }
 
+    friend Coordinates& operator+=(Coordinates& lhs, const Coordinates& rhs)
+    {
+        lhs.x += rhs.x;
+        lhs.y += rhs.y;
+        return lhs;
+    }
+
     friend Coordinates operator-(const Coordinates& lhs, const Coordinates& rhs)
     {
         Coordinates temp = { lhs.x - rhs.x, lhs.y - rhs.y };
         return temp;
+    }
+
+    friend Coordinates& operator-=(Coordinates& lhs, const Coordinates& rhs)
+    {
+        lhs.x -= rhs.x;
+        lhs.y -= rhs.y;
+        return lhs;
     }
 
     int x;

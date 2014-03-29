@@ -23,6 +23,7 @@
 #include <boost/optional.hpp>
 
 #include "Renderable.hpp"
+#include "Coordinates.hpp"
 
 namespace airball
 {

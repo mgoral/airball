@@ -35,16 +35,16 @@ map::ObjectProperties playerPropertiesFactory()
 
 World::World() : currentLevelUuid_(0)
 {
-    Level& firstLevel = createLevel();
+    Coordinates freeCoordinates = createLevel();
+    Level& firstLevel = levels_.back();
     changeCurrentLevel(firstLevel);
 
     // TODO: objects factory (with uuid assigner)
-    Coordinates playerCoordinates(0, 0);
     map::SharedCObjectPtr futurePlayer =
-        std::make_shared<map::Object>(playerCoordinates, playerPropertiesFactory(), 0);
+        std::make_shared<map::Object>(freeCoordinates, playerPropertiesFactory(), 0);
     if (firstLevel.addObject(futurePlayer))
     {
-        std::vector<map::SharedCObjectPtr> objects = firstLevel.objectsAt(playerCoordinates);
+        std::vector<map::SharedCObjectPtr> objects = firstLevel.objectsAt(freeCoordinates);
         player_ = objects[0];
     }
     else
@@ -53,14 +53,16 @@ World::World() : currentLevelUuid_(0)
     }
 }
 
-Level& World::createLevel()
+Coordinates World::createLevel()
 {
     unsigned uuid = levels_.size();
-    unsigned width = 200;
-    unsigned height = 100;
+    unsigned width = 60;
+    unsigned height = 32;
 
-    levels_.emplace_back(width, height, uuid);
-    return levels_.back();
+    std::pair<Coordinates, LevelLayout> genRet = generator_.generateDrunkDwarf(width, height);
+    levels_.emplace_back(width, height, std::move(genRet.second), uuid);
+
+    return genRet.first;
 }
 
 Level& World::currentLevel()

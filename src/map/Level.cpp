@@ -21,15 +21,20 @@
 
 #include "Level.hpp"
 #include "ObjectPredicates.hpp"
+#include "LayoutGenerator.hpp"
 
 namespace airball
 {
 namespace map
 {
 
+Level::Level(unsigned width, unsigned height, LevelLayout&& layout, unsigned uuid) :
+    width_(width), height_(height), uuid_(uuid), layout_(std::move(layout))
+{
+}
+
 Level::Level(unsigned width, unsigned height, unsigned uuid) :
-    width_(width), height_(height), uuid_(uuid),
-    layout_(width_, std::vector<Tile>(height_, Tile("empty")))
+    Level(width, height, LevelLayout(width, std::vector<Tile>(height, Tile("floor.png"))), uuid)
 {
 }
 
