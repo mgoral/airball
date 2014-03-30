@@ -23,6 +23,7 @@ file(GLOB_RECURSE AIRBALL_TESTS_SOURCESS
 
     # Selective files compiling. Remember to not add main.cpp!
     ${AIRBALL_SRC_DIR}/EventHandler.cpp
+    ${AIRBALL_SRC_DIR}/Animation.cpp
     ${AIRBALL_SRC_DIR}/Logger.cpp
     ${AIRBALL_SRC_DIR}/Renderable.cpp
     ${AIRBALL_SRC_DIR}/Resources.cpp
