@@ -23,16 +23,11 @@
 namespace airball
 {
 
-#ifdef WIN32
-std::string Resources::pathSep_ = "\\";
-#else
-std::string Resources::pathSep_ = "/";
-#endif
-
 // Initialization of static member
 std::mutex Resources::resourcesMutex_;
 
 Resources::ResourceList Resources::resources_;
+const boostfs::path Resources::airballDir_ = boostfs::current_path();
 
 SDL_Texture* Resources::getImage(const std::string& imageName, SDL_Renderer* renderer)
 {
@@ -53,7 +48,7 @@ SDL_Texture* Resources::getImage(const std::string& imageName, SDL_Renderer* ren
 
 std::string Resources::getImagePath(const std::string& imageName)
 {
-    return (getResourcesRootDir() + pathSep_ + imageName);
+    return (getResourcesRootDir() + PATH_SEP + "img" + PATH_SEP + imageName);
 }
 
 void Resources::loadImage(const ResourceList::iterator& imageIt, SDL_Renderer* renderer)
@@ -81,15 +76,7 @@ void Resources::releaseImage(const std::string& imageName)
 
 std::string Resources::getResourcesRootDir()
 {
-// TODO: airball resources will not be stored like that.
-#ifdef UNIX
-    std::string homedir = std::getenv("HOME");
-    std::string configDir = homedir + pathSep_ + ".config";
-#else
-    std::string configDir = "";
-#endif
-
-    return (configDir + pathSep_ + "airball");
+    return (airballDir_.string() + PATH_SEP + "resources");
 }
 
 } // namespace airball

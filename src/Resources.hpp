@@ -23,11 +23,20 @@
 #include <mutex>
 #include <string>
 #include <unordered_map>
+#include <boost/filesystem.hpp>
 
 #include <SDL2/SDL.h>
 
+namespace boostfs = boost::filesystem;
+
 namespace airball
 {
+
+#ifdef WIN32
+    const static std::string PATH_SEP = "\\";
+#else
+    const static std::string PATH_SEP = "/";
+#endif
 
 class ResourcesError : public std::runtime_error
 {
@@ -59,7 +68,7 @@ protected:
 
 private:
     static ResourceList resources_;
-    static std::string pathSep_;
+    const static boostfs::path airballDir_;
 
     // TODO: thread model is not yet created but it's possible that resources_ will be used from
     // many threads
