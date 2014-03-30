@@ -20,8 +20,6 @@
 
 #include "Animation.hpp"
 
-#include <iostream>
-
 namespace airball
 {
 
@@ -31,7 +29,6 @@ Animation::Animation(const SDL_Rect& source, const SDL_Rect& destination,
         source_(source), destination_(destination), frames_(startFrames), loop_(loop),
         currentFrame_(0)
 {
-    std::cout <<  frames_.size() << std::endl;
 }
 
 Animation::Animation(const SDL_Rect& source, const SDL_Rect& destination, unsigned startFrames) :
@@ -89,7 +86,6 @@ SDL_Rect Animation::position() const
 {
     if (done())
     {
-        //std::cout << "done" << std::endl;
         return destination_;
     }
 
