@@ -57,3 +57,13 @@ configure_file(airball.in ${CMAKE_INSTALL_PREFIX}/${AIRBALL_BIN_DIR}/${PROJECT_N
 install(DIRECTORY resources DESTINATION ${AIRBALL_INSTALL_DIR})
 # Hack. We can only hope that there is bin/${PROJECT_NAME} created
 install(PROGRAMS bin/${PROJECT_NAME} DESTINATION ${AIRBALL_INSTALL_DIR})
+
+# Uninstall target
+# See: http://www.cmake.org/Wiki/CMake_FAQ#Can_I_do_.22make_uninstall.22_with_CMake.3F
+configure_file(
+    "${CMAKE_MODULE_PATH}/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
+
+add_custom_target(uninstall
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)

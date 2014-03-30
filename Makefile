@@ -73,6 +73,13 @@ all: prepare
 install: prepare
 	$(MAKE) install
 
+# uninstall will fail if there's no install_manifest from previous installation.
+.PHONY: uninstall
+uninstall: $(CMAKE_BUILD_DIR)/install_manifest.txt
+	$(MAKE) uninstall
+	$(RM) -r $(PREFIX)/$(DATADIR)/$(PROJECT_NAME)
+	$(RM) $(PREFIX)/$(BINDIR)/$(PROJECT_NAME)
+
 .PHONY: run
 run: install
 	$(CD) $(PREFIX)/$(DATADIR)/$(PROJECT_NAME) && ./$(PROJECT_NAME)
