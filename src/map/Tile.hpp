@@ -21,6 +21,7 @@
 
 #include <string>
 #include <boost/optional.hpp>
+#include <boost/assert.hpp>
 
 #include "Renderable.hpp"
 #include "Coordinates.hpp"
@@ -43,13 +44,17 @@ struct Connector
 class Tile : public Renderable
 {
 public:
-    explicit Tile(const std::string& imageName) :
-        imageName_(imageName), obstacle_(false), stopsLight_(false)
+    Tile(const std::string& imageName, bool obstacle, unsigned moveFactor) :
+        imageName_(imageName), obstacle_(obstacle), stopsLight_(false), moveFactor_(moveFactor)
+    {
+        BOOST_ASSERT_MSG(moveFactor_ > 0, "Tile: moveFactor must be higher than 0");
+    }
+
+    Tile(const std::string& imageName, bool obstacle) : Tile(imageName, obstacle, 1)
     {
     }
 
-    explicit Tile(const std::string& imageName, bool obstacle) :
-        imageName_(imageName), obstacle_(obstacle)
+    explicit Tile(const std::string& imageName) : Tile(imageName, false, 1)
     {
     }
 
@@ -84,6 +89,11 @@ public:
             connector_ = connector;
     }
 
+    unsigned moveFactor() const
+    {
+        return moveFactor_;
+    }
+
     boost::optional<Connector> connector() const
     {
         return connector_;
@@ -93,6 +103,7 @@ private:
     std::string imageName_;
     bool obstacle_;
     bool stopsLight_;
+    unsigned moveFactor_;
     boost::optional<Connector> connector_;
 };
 
