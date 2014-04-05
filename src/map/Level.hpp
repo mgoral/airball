@@ -24,10 +24,12 @@
 #include <memory>
 #include <functional>
 
+#include "MapTypes.hpp"
 #include "LayoutGenerator.hpp"
 #include "Coordinates.hpp"
 #include "Object.hpp"
 #include "Tile.hpp"
+#include "LevelGraph.hpp"
 
 namespace airball
 {
@@ -40,17 +42,33 @@ public:
     typedef std::multimap<Coordinates, SharedObjectPtr> ObjectMap;
 
     Level(unsigned width, unsigned height, unsigned uuid = 0);
-    Level(unsigned width, unsigned height, LevelLayout&& layout, unsigned uuid = 0);
+    Level(LevelLayout&& layout, unsigned uuid = 0);
 
     unsigned uuid() const;
 
     Coordinates dimensions() const;
     const Tile& tile(const Coordinates& coord) const;
+    const LevelLayout& layout() const;
 
+    /**
+     * Add, update or remove an object. Where appliable, the method will perform object copy, so a
+     * given Object pointer WILL NOT point to the stored object.
+     */
     bool addObject(const SharedCObjectPtr& object);
     void updateObject(const SharedCObjectPtr& object);
     void removeObject(const SharedCObjectPtr& object);
+
+    /**
+     * Move object towards destination. If objects' current moving path ends on different
+     * destination, a new moving path will be calculated and stored before the movement occurs.
+     */
     void moveObject(const SharedCObjectPtr& object, const Coordinates& dest);
+
+    /**
+     * Set shortest moving path towards destination for the object, but DO NOT move it.
+     * Usually it's used to store moving path for the player to draw it later.
+     */
+    void setObjectDestination(const SharedCObjectPtr& object, const Coordinates& dest);
 
     /**
      * Access stored objects:
@@ -63,6 +81,8 @@ public:
     std::vector<SharedCObjectPtr> objectsAt(const Coordinates& coord) const;
     std::vector<SharedCObjectPtr> objectsAt(const Coordinates& from, const Coordinates& to) const;
     std::vector<SharedCObjectPtr> findObjects(std::function<bool(const Object&)> pred) const;
+
+    Path shortestPath(const Coordinates& from, const Coordinates& to) const;
 
     friend bool operator==(const Level& lhs, const Level& rhs)
     {
@@ -82,6 +102,28 @@ private:
     template <typename Iterator, typename T>
     static Iterator findObjectImpl(T This, const SharedCObjectPtr& object);
 
+    /**
+     * Recalculate Movement Cost Map (MCM).
+     * On MCM movement cost through obstacles is infinity (they're not removed from graph because
+     * some obstacles (e.g. creatures) might move and we'd have to regenerate graph on each move).
+     *
+     * Note that some creatures might not be obstacles (like friendly creatures?) and there is no
+     * cost in moving through them.
+     */
+    void calculateMovementCostMap();
+
+    /**
+     * Calculate moving path for object to destination coordinates.
+     * Moving path is the shortest path to destination as calculated by LevelGraph path finding
+     * algorithm.
+     *
+     * It is possible to move towards obstacle objects (like creatures - user may click on them)
+     * which have infinite cost move, but it's impossible to move towards obstacle tiles (like
+     * walls). Walls are removed from graph anyway, so LevelGraph would throw an exception in that
+     * case.
+     */
+    void setObjectDestinationImpl(SharedObjectPtr& object, const Coordinates& dest);
+
 private:
     unsigned width_;
     unsigned height_;
@@ -89,6 +131,9 @@ private:
 
     LevelLayout layout_;
     ObjectMap objects_;
+
+    LevelGraph levelGraph_;
+    CostMap movementCostMap_;
 };
 
 } // namespace map

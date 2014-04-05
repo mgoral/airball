@@ -15,6 +15,7 @@ include_directories(
 # main executable
 file(GLOB AIRBALL_SOURCES
     map/*.cpp
+    map/detail/*.cpp
     states/*.cpp
     *.cpp)
 set(AIRBALL_BIN ${PROJECT_NAME})

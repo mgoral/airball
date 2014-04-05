@@ -21,11 +21,11 @@
 
 #include <memory>
 
+#include "MapTypes.hpp"
 #include "Renderable.hpp"
 #include "Coordinates.hpp"
 #include "ObjectProperties.hpp"
 #include "Animation.hpp"
-
 
 namespace airball
 {
@@ -54,8 +54,17 @@ public:
     Animation& getAnimation() const;
 
     Coordinates coordinates() const;
-    void changeCoordinates(const Coordinates& coord);
+    void teleportTo(const Coordinates& coord);
     bool isNeighbour(const Object& other) const;
+
+    /**
+     * Set and move on predefined path.
+     */
+    void clearPath();
+    void setMovingPath(const Path& movingPath);
+    void moveBySingleStep();
+    const Coordinates& nextStep() const; // UNDEFINED BEHAVIOUR FOR EMPTY PATHS!
+    const Path& movingPath() const;
 
     ObjectProperties& properties();
     const ObjectProperties& properties() const;
@@ -67,12 +76,15 @@ public:
     }
 
 private:
+    void changeCoordinates(const Coordinates& coord);
     void setMovementAnimation(const Coordinates& to);
 
 private:
     Coordinates coord_;
     ObjectProperties properties_;
     unsigned uuid_;
+
+    Path movingPath_;
 
     // Animation affects only visual appearance of Object and is not very important from any point
     // of view, so we'll make it mutable to easily pass to Screen::addAnimatedRenderable. 

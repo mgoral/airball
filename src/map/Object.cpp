@@ -61,6 +61,13 @@ Coordinates Object::coordinates() const
     return coord_;
 }
 
+void Object::teleportTo(const Coordinates& coord)
+{
+    animation_.clear();
+    movingPath_.clear();
+    coord_ = coord;
+}
+
 bool Object::isNeighbour(const Object& other) const
 {
     unsigned distX = std::max(coord_.x, other.coord_.x) - std::min(coord_.x, other.coord_.x);
@@ -68,10 +75,37 @@ bool Object::isNeighbour(const Object& other) const
     return (distX == 1 && distY == 1);
 }
 
-void Object::changeCoordinates(const Coordinates& coord)
+void Object::clearPath()
 {
-    setMovementAnimation(coord);
-    coord_ = coord;
+    movingPath_.clear();
+}
+
+void Object::setMovingPath(const Path& movingPath)
+{
+    movingPath_ = movingPath;
+
+    // Postprocess Path
+    while (!movingPath_.empty() && movingPath_.back() == coordinates())
+        movingPath_.pop_back();
+}
+
+void Object::moveBySingleStep()
+{
+    if (!movingPath_.empty())
+    {
+        changeCoordinates(movingPath_.back());
+        movingPath_.pop_back();
+    }
+}
+
+const Coordinates& Object::nextStep() const // UNDEFINED BEHAVIOUR FOR EMPTY PATHS!
+{
+    return movingPath_.back();
+}
+
+const Path& Object::movingPath() const
+{
+    return movingPath_;
 }
 
 ObjectProperties& Object::properties()
@@ -87,6 +121,12 @@ const ObjectProperties& Object::properties() const
 unsigned Object::uuid() const
 {
     return uuid_;
+}
+
+void Object::changeCoordinates(const Coordinates& coord)
+{
+    setMovementAnimation(coord);
+    coord_ = coord;
 }
 
 void Object::setMovementAnimation(const Coordinates& to)

@@ -20,63 +20,61 @@
 #define AIRBALL_MAP_COORDINATES_HPP_
 
 #include <initializer_list>
+#include <cstdlib>
+#include <vector>
+
+#ifndef NDEBUG
+#include <ostream>
+#endif
 
 namespace airball
 {
 namespace map
 {
 
+
 class Coordinates
 {
 public:
-    Coordinates(int x, int y) : x(x), y(y)
+    Coordinates(int x, int y) noexcept : x(x), y(y)
     {
     }
 
-    friend bool operator==(const Coordinates& lhs, const Coordinates& rhs)
+    template <typename T>
+    bool inBoundaries(const std::vector<std::vector<T>>& toCheck) const
     {
-        return (lhs.x == rhs.x && lhs.y == rhs.y);
+        return (x >= 0 && y >= 0 && x < toCheck.size() && y < toCheck[x].size());
     }
 
-    friend bool operator!=(const Coordinates& lhs, const Coordinates& rhs)
+    bool isNeighbour(const Coordinates& other) const
     {
-        return !(lhs == rhs);
-    }
-
-    friend bool operator<(const Coordinates& lhs, const Coordinates& rhs)
-    {
-        return ((lhs.x < rhs.x) || ((lhs.x == rhs.x) && (lhs.y < rhs.y)));
-    }
-
-    friend Coordinates operator+(const Coordinates& lhs, const Coordinates& rhs)
-    {
-        Coordinates temp = { lhs.x + rhs.x, lhs.y + rhs.y };
-        return temp;
-    }
-
-    friend Coordinates& operator+=(Coordinates& lhs, const Coordinates& rhs)
-    {
-        lhs.x += rhs.x;
-        lhs.y += rhs.y;
-        return lhs;
-    }
-
-    friend Coordinates operator-(const Coordinates& lhs, const Coordinates& rhs)
-    {
-        Coordinates temp = { lhs.x - rhs.x, lhs.y - rhs.y };
-        return temp;
-    }
-
-    friend Coordinates& operator-=(Coordinates& lhs, const Coordinates& rhs)
-    {
-        lhs.x -= rhs.x;
-        lhs.y -= rhs.y;
-        return lhs;
+        return (std::abs(x - other.x) <= 1 && std::abs(y - other.y) <= 1);
     }
 
     int x;
     int y;
+
+#ifndef NDEBUG
+    friend std::ostream& operator<<(std::ostream& stream, const Coordinates& coord)
+    {
+        return stream << "(" << coord.x << ", " << coord.y << ")";
+    }
+#endif
 };
+
+bool operator==(const Coordinates& lhs, const Coordinates& rhs);
+bool operator!=(const Coordinates& lhs, const Coordinates& rhs);
+bool operator<(const Coordinates& lhs, const Coordinates& rhs);
+
+Coordinates operator+(const Coordinates& lhs, const Coordinates& rhs);
+Coordinates& operator+=(Coordinates& lhs, const Coordinates& rhs);
+Coordinates operator-(const Coordinates& lhs, const Coordinates& rhs);
+Coordinates& operator-=(Coordinates& lhs, const Coordinates& rhs);
+
+std::size_t hash_value(const Coordinates& coord);
+
+// Some type definitions
+typedef std::vector<Coordinates> CoordinatesVector;
 
 } // namespace map
 } // namespace airball

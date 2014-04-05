@@ -16,7 +16,6 @@
  *
  */
 
-#include <iostream>
 #include <thread>
 #include <chrono>
 #include <memory>
@@ -59,7 +58,7 @@ int Application::run()
     std::unique_ptr<states::IState> initialState(new states::GameState());
     stateStack.push(std::move(initialState));
 
-    const unsigned fpsCap = 60; // TODO: read from config file
+    const unsigned fpsCap = 50; // TODO: read from config file
     const unsigned maxFrameSkip = 10;
 
     std::chrono::nanoseconds timePerUpdate(1000000000 / fpsCap);

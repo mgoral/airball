@@ -16,25 +16,29 @@
  *
  */
 
+#include <stdexcept>
 #include <functional>
 #include <algorithm>
 
 #include "Level.hpp"
 #include "ObjectPredicates.hpp"
 #include "LayoutGenerator.hpp"
+#include "CostCalculator.hpp"
 
 namespace airball
 {
 namespace map
 {
 
-Level::Level(unsigned width, unsigned height, LevelLayout&& layout, unsigned uuid) :
-    width_(width), height_(height), uuid_(uuid), layout_(std::move(layout))
+Level::Level(LevelLayout&& layout, unsigned uuid) :
+    width_(layout.size()), height_(layout.at(0).size()), uuid_(uuid), layout_(std::move(layout)),
+    levelGraph_(layout_)
 {
+    calculateMovementCostMap();
 }
 
 Level::Level(unsigned width, unsigned height, unsigned uuid) :
-    Level(width, height, LevelLayout(width, std::vector<Tile>(height, Tile("floor.png"))), uuid)
+    Level(LevelLayout(width, std::vector<Tile>(height, Tile("floor.png"))), uuid)
 {
 }
 
@@ -50,7 +54,12 @@ Coordinates Level::dimensions() const
 
 const Tile& Level::tile(const Coordinates& coord) const
 {
-    return layout_.at(coord.x).at(coord.y);
+    return layout_[coord.x][coord.y];
+}
+
+const LevelLayout& Level::layout() const
+{
+    return layout_;
 }
 
 bool Level::addObject(const SharedCObjectPtr& object)
@@ -58,6 +67,10 @@ bool Level::addObject(const SharedCObjectPtr& object)
     if (objectCanBeAdded(object, object->coordinates()))
     {
         objects_.insert(std::make_pair(object->coordinates(), object->clone()));
+
+        if (pred::isObstacle(*object))
+            calculateMovementCostMap();
+
         return true;
     }
 
@@ -84,26 +97,42 @@ void Level::removeObject(const SharedCObjectPtr& object)
         if (pred::hasUuid(*(objectIt->second), object->uuid()))
         {
             objects_.erase(objectIt);
+
+            if (pred::isObstacle(*object))
+                calculateMovementCostMap();
+
             return;
         }
     }
 }
 
+void Level::setObjectDestination(const SharedCObjectPtr& object, const Coordinates& dest)
+{
+    ObjectMap::const_iterator searchIt = findObject(object);
+    if (searchIt != objects_.end())
+    {
+        SharedObjectPtr objectToMove = searchIt->second;
+        setObjectDestinationImpl(objectToMove, dest);
+    }
+}
+
 void Level::moveObject(const SharedCObjectPtr& object, const Coordinates& dest)
 {
-    if (object->coordinates() == dest)
-        return;
-
-    if (objectCanBeAdded(object, dest))
+    ObjectMap::const_iterator searchIt = findObject(object);
+    if (searchIt != objects_.end())
     {
-        ObjectMap::const_iterator searchIt = findObject(object);
-        if (searchIt != objects_.end())
+        SharedObjectPtr objectToMove = searchIt->second;
+        setObjectDestinationImpl(objectToMove, dest);
+
+        if (!objectToMove->movingPath().empty() &&
+            objectCanBeAdded(objectToMove, objectToMove->nextStep()))
         {
-            SharedObjectPtr objectToMove = searchIt->second;
-            objectToMove->changeCoordinates(dest);
+            objectToMove->moveBySingleStep();
 
             objects_.erase(searchIt);
-            objects_.insert(std::make_pair(dest, objectToMove));
+            objects_.insert(std::make_pair(objectToMove->coordinates(), objectToMove));
+
+            calculateMovementCostMap();
         }
     }
 }
@@ -152,13 +181,20 @@ std::vector<SharedCObjectPtr> Level::findObjects(std::function<bool(const Object
     return ret;
 }
 
+Path Level::shortestPath(const Coordinates& from, const Coordinates& to) const
+{
+    return levelGraph_.findPath(from, to, movementCostMap_);
+    //return levelGraph_.findDijkstraPath(from, to, movementCostMap_);
+}
+
 bool Level::objectCanBeAdded(const SharedCObjectPtr& obj, const Coordinates& coord) const
 {
     // Object cannot be added:
+    // - when destination is not in layout boundaries
     // - on tiles that are obstacles
     // - on obstacles and creatures when it's obstacle or creature itself
 
-    if (!tile(coord).isObstacle())
+    if (!coord.inBoundaries(layout_) || !tile(coord).isObstacle())
     {
         if (!pred::isObstacle(*obj) && !pred::isCreature(*obj))
             return true;
@@ -202,6 +238,47 @@ Iterator Level::findObjectImpl(T This, const SharedCObjectPtr& object)
     if (searchIt == boundaries.second)
         return This->objects_.end();
     return searchIt;
+}
+
+void Level::calculateMovementCostMap()
+{
+    std::vector<SharedCObjectPtr> obstacles = findObjects(
+        [](const Object& obj) { return (pred::isObstacle(obj)); });
+
+    GoalList obstacleCoords;
+    std::transform(obstacles.begin(), obstacles.end(), std::back_inserter(obstacleCoords),
+        [](const SharedCObjectPtr& obj) -> Coordinates { return obj->coordinates(); });
+
+    CostCalculator costCalculator;
+    movementCostMap_ = costCalculator.calculate(GoalList(), obstacleCoords, layout());
+}
+
+void Level::setObjectDestinationImpl(SharedObjectPtr& object, const Coordinates& dest)
+{
+    if (object->coordinates() == dest)
+    {
+        object->clearPath();
+        return;
+    }
+
+    if (dest.inBoundaries(layout_) && !layout_[dest.x][dest.y].isObstacle())
+    {
+        const Path& currentMovingPath = object->movingPath();
+        if (currentMovingPath.empty() || currentMovingPath[0] != dest)
+        {
+            Path movingPath;
+            if (object->coordinates().isNeighbour(dest))
+            {
+                // No need to run path finding for neighbours ;)
+                movingPath.push_back(dest);
+            }
+            else
+            {
+                movingPath = shortestPath(object->coordinates(), dest);
+            }
+            object->setMovingPath(movingPath);
+        }
+    }
 }
 
 } // namespace map

@@ -16,42 +16,32 @@
  *
  */
 
-#ifndef AIRBALL_MAP_WORLD_HPP_
-#define AIRBALL_MAP_WORLD_HPP_
+#ifndef AIRBALL_STATICIMAGE_HPP_
+#define AIRBALL_STATICIMAGE_HPP_
 
-#include <vector>
+#include <string>
 
-#include "Level.hpp"
-#include "LayoutGenerator.hpp"
+#include "Renderable.hpp"
 
 namespace airball
 {
-namespace map
-{
 
-class World
+class StaticImage : public Renderable
 {
 public:
-    World();
+    explicit StaticImage(const std::string& imageName) : imageName_(imageName)
+    {
+    }
 
-    /**
-     * Returns a randomly picked non-obstacle coordinates on created level
-     */
-    Coordinates createLevel();
-    Level& currentLevel();
-    void changeCurrentLevel(const Level& level);
-    Level& level(unsigned uuid);
-
-    const SharedCObjectPtr& player() const;
+    std::string imageName() const
+    {
+        return imageName_;
+    }
 
 private:
-    std::vector<Level> levels_;
-    unsigned currentLevelUuid_;
-    SharedCObjectPtr player_;
-    LayoutGenerator generator_;
+    std::string imageName_;
 };
 
-} // namespace map
 } // namespace airball
 
-#endif // AIRBALL_MAP_WORLD_HPP_
+#endif // AIRBALL_STATICIMAGE_HPP_

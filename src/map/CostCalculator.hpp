@@ -16,42 +16,40 @@
  *
  */
 
-#ifndef AIRBALL_MAP_WORLD_HPP_
-#define AIRBALL_MAP_WORLD_HPP_
+// Big thanks go to Brian Walker (Brogue developer - check it out) for this article:
+// http://www.roguebasin.com/index.php?title=The_Incredible_Power_of_Dijkstra_Maps
+
+#ifndef AIRBALL_MAP_COSCALCULATOR_HPP_
+#define AIRBALL_MAP_COSCALCULATOR_HPP_
 
 #include <vector>
 
+#include "MapTypes.hpp"
 #include "Level.hpp"
-#include "LayoutGenerator.hpp"
+#include "Coordinates.hpp"
 
 namespace airball
 {
 namespace map
 {
 
-class World
+class CostCalculator
 {
 public:
-    World();
-
-    /**
-     * Returns a randomly picked non-obstacle coordinates on created level
-     */
-    Coordinates createLevel();
-    Level& currentLevel();
-    void changeCurrentLevel(const Level& level);
-    Level& level(unsigned uuid);
-
-    const SharedCObjectPtr& player() const;
+    CostMap calculate(const GoalList& goals, const GoalList& obstacles,
+        const LevelLayout& layout) const;
 
 private:
-    std::vector<Level> levels_;
-    unsigned currentLevelUuid_;
-    SharedCObjectPtr player_;
-    LayoutGenerator generator_;
+    CostMap createEmptyCostMap(const LevelLayout& layout) const;
+    void addObstacles(const GoalList& obstacles, CostMap& currentMap) const;
+
+    static int getTileCost(const Tile& tile);
+
+private:
+    static const int OBSTACLE_COST;
 };
 
 } // namespace map
 } // namespace airball
 
-#endif // AIRBALL_MAP_WORLD_HPP_
+#endif // AIRBALL_MAP_COSCALCULATOR_HPP_

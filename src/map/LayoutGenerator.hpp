@@ -22,6 +22,7 @@
 #include <vector>
 #include <random>
 
+#include "MapTypes.hpp"
 #include "Tile.hpp"
 #include "Coordinates.hpp"
 
@@ -29,8 +30,6 @@ namespace airball
 {
 namespace map
 {
-
-typedef std::vector<std::vector<Tile>> LevelLayout;
 
 class LayoutGenerator
 {

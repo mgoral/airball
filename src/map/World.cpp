@@ -29,6 +29,9 @@ map::ObjectProperties playerPropertiesFactory()
 {
     map::ObjectProperties prop;
     prop.image = "player.png";
+    prop.player = true;
+    prop.obstacle = true;
+    prop.creature = true;
 
     return prop;
 }
@@ -60,7 +63,7 @@ Coordinates World::createLevel()
     unsigned height = 32;
 
     std::pair<Coordinates, LevelLayout> genRet = generator_.generateDrunkDwarf(width, height);
-    levels_.emplace_back(width, height, std::move(genRet.second), uuid);
+    levels_.emplace_back(std::move(genRet.second), uuid);
 
     return genRet.first;
 }
@@ -80,7 +83,7 @@ Level& World::level(unsigned uuid)
     return levels_[uuid];
 }
 
-SharedCObjectPtr World::player() const
+const SharedCObjectPtr& World::player() const
 {
     return player_;
 }

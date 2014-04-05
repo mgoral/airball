@@ -16,42 +16,27 @@
  *
  */
 
-#ifndef AIRBALL_MAP_WORLD_HPP_
-#define AIRBALL_MAP_WORLD_HPP_
+#ifndef AIRBALL_MAP_MAPTYPES_HPP_
+#define AIRBALL_MAP_MAPTYPES_HPP_
 
 #include <vector>
 
-#include "Level.hpp"
-#include "LayoutGenerator.hpp"
+#include "Tile.hpp"
+#include "Coordinates.hpp"
 
 namespace airball
 {
 namespace map
 {
 
-class World
-{
-public:
-    World();
+typedef std::vector<std::vector<Tile>> LevelLayout;
 
-    /**
-     * Returns a randomly picked non-obstacle coordinates on created level
-     */
-    Coordinates createLevel();
-    Level& currentLevel();
-    void changeCurrentLevel(const Level& level);
-    Level& level(unsigned uuid);
+typedef std::vector<std::vector<int>> CostMap;
+typedef std::vector<Coordinates> GoalList;
 
-    const SharedCObjectPtr& player() const;
-
-private:
-    std::vector<Level> levels_;
-    unsigned currentLevelUuid_;
-    SharedCObjectPtr player_;
-    LayoutGenerator generator_;
-};
+typedef std::vector<Coordinates> Path;
 
 } // namespace map
 } // namespace airball
 
-#endif // AIRBALL_MAP_WORLD_HPP_
+#endif // AIRBALL_MAP_MAPTYPES_HPP_

@@ -21,6 +21,7 @@
 
 #include "GameState.hpp"
 #include "EventHandler.hpp"
+#include "StaticImage.hpp"
 
 #include "map/Level.hpp"
 #include "map/Actions.hpp"
@@ -82,10 +83,32 @@ void GameState::handleEvent(SDL_Event& event)
     switch (event.type)
     {
         case SDL_KEYDOWN:
+        {
             SDL_Keysym pressedKey = event.key.keysym;
             KeyInfo keyInfo = { pressedKey.mod, pressedKey.sym };
             eventHandler_.runAction(keyInfo);
             break;
+        }
+        case SDL_MOUSEBUTTONDOWN:
+        {
+            // TODO FIXME: use eventHandler (it should store not only keys)
+            int tileX = event.button.x / map::Object::size();
+            int tileY = event.button.y / map::Object::size();
+            map::Coordinates dest(tileX, tileY);
+
+            map::Level& currentLevel = world_.currentLevel();
+            map::SharedCObjectPtr player = world_.player();
+            if (!player->movingPath().empty() && player->movingPath()[0] == dest)
+            {
+                currentLevel.moveObject(player, dest);
+            }
+            else
+            {
+                currentLevel.setObjectDestination(player, dest);
+            }
+
+            break;
+        }
     }
 }
 
@@ -126,6 +149,27 @@ void GameState::draw(airball::Screen& screen)
     {
         screen.addAnimatedRenderable(*object, object->getAnimation());
     }
+
+    for (const map::Coordinates& coord : world_.player()->movingPath())
+    {
+        SDL_Rect destination = {
+            static_cast<int>(map::Object::size()) * coord.x,
+            static_cast<int>(map::Object::size()) * coord.y,
+            static_cast<int>(map::Object::size()),
+            static_cast<int>(map::Object::size())
+        };
+        screen.addRenderable(StaticImage("path_mark.png"), &destination);
+    }
+
+    int cursorX, cursorY; // SDL will store mouse position here
+    SDL_GetMouseState(&cursorX, &cursorY);
+    SDL_Rect markDestination = {
+        static_cast<int>(map::Object::size()) * (cursorX / static_cast<int>(map::Object::size())),
+        static_cast<int>(map::Object::size()) * (cursorY / static_cast<int>(map::Object::size())),
+        static_cast<int>(map::Object::size()),
+        static_cast<int>(map::Object::size())
+    };
+    screen.addRenderable(StaticImage("path_mark.png"), &markDestination);
 
     screen.update();
 }
