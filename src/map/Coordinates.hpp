@@ -43,7 +43,8 @@ public:
     template <typename T>
     bool inBoundaries(const std::vector<std::vector<T>>& toCheck) const
     {
-        return (x >= 0 && y >= 0 && x < toCheck.size() && y < toCheck[x].size());
+        return (x >= 0 && y >= 0 &&
+            static_cast<size_t>(x) < toCheck.size() && static_cast<size_t>(y) < toCheck[x].size());
     }
 
     bool isNeighbour(const Coordinates& other) const
