@@ -16,6 +16,8 @@
  *
  */
 
+#include <sstream>
+
 #include <SDL2/SDL_image.h>
 
 #include "Resources.hpp"
@@ -24,20 +26,45 @@ namespace airball
 {
 
 // Initialization of static member
-std::mutex Resources::resourcesMutex_;
+std::mutex Resources::imagesMutex_;
 
-Resources::ResourceList Resources::resources_;
+Resources::ResourceList<SDL_Texture*> Resources::images_;
 const boostfs::path Resources::airballDir_ = boostfs::current_path();
+
+std::string Resources::getFilePath(const std::string& partialPath)
+{
+    return (getResourcesRootDir() + PATH_SEP + partialPath);
+}
+
+std::string Resources::joinPath(std::initializer_list<std::string> parts)
+{
+    std::stringstream path;
+    std::initializer_list<std::string>::const_iterator it = parts.begin();
+
+    if (it != parts.end())
+    {
+        path << *it;
+        ++it;
+
+        for (; it != parts.end(); ++it)
+        {
+            path << PATH_SEP;
+            path << *it;
+        }
+    }
+
+    return path.str();
+}
 
 SDL_Texture* Resources::getImage(const std::string& imageName, SDL_Renderer* renderer)
 {
-    std::lock_guard<std::mutex> lock(resourcesMutex_);
+    std::lock_guard<std::mutex> lock(imagesMutex_);
 
 
-    std::pair<ResourceList::iterator, bool> emplaceRet =
-        resources_.emplace(std::make_pair(imageName, nullptr));
+    std::pair<ResourceList<SDL_Texture*>::iterator, bool> emplaceRet =
+        images_.emplace(std::make_pair(imageName, nullptr));
 
-    ResourceList::iterator imageIt = emplaceRet.first;
+    ResourceList<SDL_Texture*>::iterator imageIt = emplaceRet.first;
     if (emplaceRet.second)
     {
         loadImage(imageIt, renderer);
@@ -46,16 +73,11 @@ SDL_Texture* Resources::getImage(const std::string& imageName, SDL_Renderer* ren
     return imageIt->second;
 }
 
-std::string Resources::getImagePath(const std::string& imageName)
-{
-    return (getResourcesRootDir() + PATH_SEP + "img" + PATH_SEP + imageName);
-}
-
-void Resources::loadImage(const ResourceList::iterator& imageIt, SDL_Renderer* renderer)
+void Resources::loadImage(const ResourceList<SDL_Texture*>::iterator& imageIt, SDL_Renderer* renderer)
 {
     if (imageIt->second == nullptr)
     {
-        std::string imagePath = getImagePath(imageIt->first);
+        std::string imagePath = getFilePath(joinPath({"img", imageIt->first}));
         SDL_Surface* surface = IMG_Load(imagePath.c_str());
         imageIt->second = SDL_CreateTextureFromSurface(renderer, surface);
         SDL_FreeSurface(surface);
@@ -64,10 +86,10 @@ void Resources::loadImage(const ResourceList::iterator& imageIt, SDL_Renderer* r
 
 void Resources::releaseImage(const std::string& imageName)
 {
-    std::lock_guard<std::mutex> lock(resourcesMutex_);
+    std::lock_guard<std::mutex> lock(imagesMutex_);
 
-    ResourceList::iterator imageIt = resources_.find(imageName);
-    if (imageIt != resources_.end() && imageIt->second != nullptr)
+    ResourceList<SDL_Texture*>::iterator imageIt = images_.find(imageName);
+    if (imageIt != images_.end() && imageIt->second != nullptr)
     {
         SDL_DestroyTexture(imageIt->second);
         imageIt->second = nullptr;

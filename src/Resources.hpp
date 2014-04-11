@@ -21,6 +21,7 @@
 
 #include <stdexcept>
 #include <mutex>
+#include <initializer_list>
 #include <string>
 #include <unordered_map>
 #include <boost/filesystem.hpp>
@@ -53,26 +54,31 @@ public:
 class Resources
 {
 public:
-    typedef std::unordered_map<std::string, SDL_Texture*> ResourceList;
+    using FileName = std::string;
+
+    template<typename T>
+    using ResourceList = std::unordered_map<FileName, T>;
 
     Resources(const Resources&) = delete;
     Resources& operator=(const Resources&) = delete;
 
-    static SDL_Texture* getImage(const std::string& imageName, SDL_Renderer* renderer);
-    static void releaseImage(const std::string& imageName);
-    static std::string getImagePath(const std::string& imageName);
+    static SDL_Texture* getImage(const FileName& imageName, SDL_Renderer* renderer);
+    static void releaseImage(const FileName& imageName);
 
 protected:
-    static void loadImage(const ResourceList::iterator& imageIt, SDL_Renderer* renderer);
     static std::string getResourcesRootDir();
+    static std::string joinPath(std::initializer_list<std::string> parts);
+    static std::string getFilePath(const FileName& partialPath);
+
+    static void loadImage(const ResourceList<SDL_Texture*>::iterator& imageIt, SDL_Renderer* renderer);
 
 private:
-    static ResourceList resources_;
+    static ResourceList<SDL_Texture*> images_;
     const static boostfs::path airballDir_;
 
-    // TODO: thread model is not yet created but it's possible that resources_ will be used from
+    // TODO: thread model is not yet created but it's possible that images_ will be used from
     // many threads
-    static std::mutex resourcesMutex_;
+    static std::mutex imagesMutex_;
 };
 
 } // namespace airball
