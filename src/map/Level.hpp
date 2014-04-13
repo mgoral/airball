@@ -23,6 +23,7 @@
 #include <map>
 #include <memory>
 #include <functional>
+#include <stdexcept>
 
 #include "MapTypes.hpp"
 #include "LayoutGenerator.hpp"
@@ -81,6 +82,15 @@ public:
     std::vector<SharedCObjectPtr> objectsAt(const Coordinates& coord) const;
     std::vector<SharedCObjectPtr> objectsAt(const Coordinates& from, const Coordinates& to) const;
     std::vector<SharedCObjectPtr> findObjects(std::function<bool(const Object&)> pred) const;
+
+    template<typename T>
+    T& accessObjectComponent(const SharedCObjectPtr& object)
+    {
+        ObjectMap::iterator searchIt = findObject(object);
+        if (searchIt != objects_.end())
+            return searchIt->second->getComponent<T>();
+        throw std::invalid_argument("Object not found: " + std::to_string(object->uuid()));
+    }
 
     Path shortestPath(const Coordinates& from, const Coordinates& to) const;
 

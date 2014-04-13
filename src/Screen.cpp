@@ -88,7 +88,7 @@ void Screen::addRenderable(const Renderable& renderable, SDL_Rect* destination)
     SDL_RenderCopy(renderer_, texture, renderable.getImagePart(), destination);
 }
 
-void Screen::addAnimatedRenderable(const Renderable& renderable, Animation& animation)
+void Screen::addAnimatedRenderable(const Renderable& renderable, components::Animation& animation)
 {
     SDL_Texture* texture = Resources::getImage(renderable.imageName(), renderer_);
 

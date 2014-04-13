@@ -16,15 +16,19 @@
  *
  */
 
-#ifndef AIRBALL_ANIMATION_HPP_
-#define AIRBALL_ANIMATION_HPP_
+#ifndef AIRBALL_COMPONENTS_ANIMATION_HPP_
+#define AIRBALL_COMPONENTS_ANIMATION_HPP_
 
 #include <memory>
 #include <vector>
 
 #include <SDL2/SDL.h>
 
+#include "Component.hpp"
+
 namespace airball
+{
+namespace components
 {
 
 typedef std::shared_ptr<SDL_Rect> SDL_RectPtr;
@@ -41,13 +45,18 @@ typedef std::shared_ptr<SDL_Rect> SDL_RectPtr;
  * displayed. Frames can be empty - in that case the whole image will be rendered. It is useful
  * e.g. for moving animations, where the whole image is moved around the screen.
  */
-class Animation
+class Animation : public Component
 {
 public:
     Animation(const SDL_Rect& source, const SDL_Rect& destination, unsigned startFrames, bool loop);
     Animation(const SDL_Rect& source, const SDL_Rect& destination, unsigned startFrames);
     explicit Animation(unsigned startFrames);
     Animation();
+
+    Animation* clone()
+    {
+        return new Animation(*this);
+    }
 
     /**
      * Is animation finished. If it's not looped animation, it's considered finished on the last
@@ -111,6 +120,7 @@ private:
     unsigned currentFrame_;
 };
 
+} // namespace components
 } // namespace airball
 
-#endif // AIRBALL_ANIMATION_HPP_
+#endif // AIRBALL_COMPONENTS_ANIMATION_HPP_

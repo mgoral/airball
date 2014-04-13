@@ -147,7 +147,22 @@ void GameState::draw(airball::Screen& screen)
 
     for (const map::SharedCObjectPtr& object : currentLevel.objects())
     {
-        screen.addAnimatedRenderable(*object, object->getAnimation());
+        if (object->hasComponent<components::Animation>())
+        {
+            components::Animation& anim =
+                currentLevel.accessObjectComponent<components::Animation>(object);
+            screen.addAnimatedRenderable(*object, anim);
+        }
+        else
+        {
+            SDL_Rect destination = {
+                static_cast<int>(map::Object::size() * object->coordinates().x),
+                static_cast<int>(map::Object::size() * object->coordinates().y),
+                static_cast<int>(map::Object::size()),
+                static_cast<int>(map::Object::size())
+            };
+            screen.addRenderable(*object, &destination);
+        }
     }
 
     for (const map::Coordinates& coord : world_.player()->movingPath())

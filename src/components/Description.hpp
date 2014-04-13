@@ -13,21 +13,31 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
- *
  */
 
-#ifndef AIRBALL_MAP_OBJECTPROPERTIES_HPP_
-#define AIRBALL_MAP_OBJECTPROPERTIES_HPP_
+#ifndef AIRBALL_COMPONENTS_DESCRIPTION_HPP_
+#define AIRBALL_COMPONENTS_DESCRIPTION_HPP_
 
-#include <string>
+#include <memory>
+
+#include "Component.hpp"
 
 namespace airball
 {
-namespace map
+namespace components
 {
 
-struct ObjectProperties
+/**
+ * Basic component containing description of the objects. Each object should contain a Description
+ * component.
+ */
+struct Description : public Component
 {
+    virtual Description* clone()
+    {
+        return new Description(*this);
+    }
+
     // Please provide a sensible defaults for all properties.
     // When giving created ObjectProperties to objects, please fill all needed properties as the
     // defaults may change.
@@ -39,7 +49,7 @@ struct ObjectProperties
     bool creature = false;
 };
 
-} // namespace map
+} // namespace components
 } // namespace airball
 
-#endif // AIRBALL_MAP_OBJECTPROPERTIES_HPP_
+#endif // AIRBALL_COMPONENTS_DESCRIPTION_HPP_

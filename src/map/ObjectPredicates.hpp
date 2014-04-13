@@ -21,7 +21,7 @@
 
 #include "Object.hpp"
 
-#include "detail/Utils.hpp"
+#include "components/Description.hpp"
 
 namespace airball
 {
@@ -30,25 +30,24 @@ namespace map
 namespace pred
 {
 
-bool any(const Object& obj)
+bool any(const Object&)
 {
-    UNUSED_PARAM(obj);
     return true;
 }
 
 bool isPlayer(const Object& obj)
 {
-    return obj.properties().player;
+    return obj.getComponent<components::Description>().player;
 }
 
 bool isObstacle(const Object& obj)
 {
-    return obj.properties().obstacle;
+    return obj.getComponent<components::Description>().obstacle;
 }
 
 bool isCreature(const Object& obj)
 {
-    return obj.properties().creature;
+    return obj.getComponent<components::Description>().creature;
 }
 
 bool hasUuid(const Object& obj, unsigned uuid)

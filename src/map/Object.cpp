@@ -13,12 +13,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 #include <algorithm>
 
 #include "Object.hpp"
+
+#include "components/Animation.hpp"
 
 namespace airball
 {
@@ -29,11 +30,26 @@ namespace map
  * Object
  */
 
-Object::Object(const Coordinates& coord, const ObjectProperties& properties, unsigned uuid) :
-    coord_(coord), properties_(properties), uuid_(uuid), animation_(8)
+Object::Object(
+    const Coordinates& coord, const components::Description& description, unsigned uuid) :
+        coord_(coord), uuid_(uuid)
 {
-    // Init animation.
-    setMovementAnimation(coord_);
+    addComponent(description);
+}
+
+Object::Object(const Object& other) :
+    coord_(other.coord_), uuid_(other.uuid_), movingPath_(other.movingPath_)
+{
+    for (const Components::value_type& val : other.components_)
+    {
+        components_[val.first].reset(val.second->clone());
+    }
+}
+
+Object& Object::operator=(Object other)
+{
+    swap(*this, other);
+    return *this;
 }
 
 SharedObjectPtr Object::clone() const
@@ -48,12 +64,8 @@ unsigned Object::size()
 
 std::string Object::imageName() const
 {
-    return properties_.image;
-}
-
-Animation& Object::getAnimation() const
-{
-    return animation_;
+    components::Description descr = getComponent<components::Description>();
+    return descr.image;
 }
 
 Coordinates Object::coordinates() const
@@ -63,7 +75,14 @@ Coordinates Object::coordinates() const
 
 void Object::teleportTo(const Coordinates& coord)
 {
-    animation_.clear();
+    try
+    {
+        getComponent<components::Animation>().clear();
+    }
+    catch(const std::invalid_argument&) // No Animation
+    {
+    }
+
     movingPath_.clear();
     coord_ = coord;
 }
@@ -108,16 +127,6 @@ const Path& Object::movingPath() const
     return movingPath_;
 }
 
-ObjectProperties& Object::properties()
-{
-    return properties_;
-}
-
-const ObjectProperties& Object::properties() const
-{
-    return properties_;
-}
-
 unsigned Object::uuid() const
 {
     return uuid_;
@@ -131,23 +140,31 @@ void Object::changeCoordinates(const Coordinates& coord)
 
 void Object::setMovementAnimation(const Coordinates& to)
 {
-    SDL_Rect source = {
-        static_cast<int>(map::Object::size()) * coord_.x,
-        static_cast<int>(map::Object::size()) * coord_.y,
-        static_cast<int>(map::Object::size()),
-        static_cast<int>(map::Object::size())
-    };
+    try
+    {
+        components::Animation& animation = getComponent<components::Animation>();
 
-    SDL_Rect destination = {
-        static_cast<int>(map::Object::size()) * to.x,
-        static_cast<int>(map::Object::size()) * to.y,
-        static_cast<int>(map::Object::size()),
-        static_cast<int>(map::Object::size())
-    };
+        SDL_Rect source = {
+            static_cast<int>(map::Object::size()) * coord_.x,
+            static_cast<int>(map::Object::size()) * coord_.y,
+            static_cast<int>(map::Object::size()),
+            static_cast<int>(map::Object::size())
+        };
 
-    animation_.reset();
-    animation_.setMovementSource(source);
-    animation_.setMovementDestination(destination);
+        SDL_Rect destination = {
+            static_cast<int>(map::Object::size()) * to.x,
+            static_cast<int>(map::Object::size()) * to.y,
+            static_cast<int>(map::Object::size()),
+            static_cast<int>(map::Object::size())
+        };
+
+        animation.reset();
+        animation.setMovementSource(source);
+        animation.setMovementDestination(destination);
+    }
+    catch (const std::invalid_argument&) // no Animation component
+    {
+    }
 }
 
 } // namespace map

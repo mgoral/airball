@@ -14,6 +14,7 @@ include_directories(
 
 # main executable
 file(GLOB AIRBALL_SOURCES
+    components/*.cpp
     map/*.cpp
     map/detail/*.cpp
     states/*.cpp

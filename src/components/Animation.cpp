@@ -22,7 +22,8 @@
 
 namespace airball
 {
-
+namespace components
+{
 
 Animation::Animation(const SDL_Rect& source, const SDL_Rect& destination,
     unsigned startFrames, bool loop) :
@@ -146,4 +147,5 @@ Animation Animation::operator++(int)
 }
 
 
+} // namespace components
 } // namespace airball

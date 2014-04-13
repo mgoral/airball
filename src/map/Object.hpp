@@ -13,19 +13,21 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 #ifndef AIRBALL_MAP_OBJECT_HPP_
 #define AIRBALL_MAP_OBJECT_HPP_
 
+#include <string>
 #include <memory>
+#include <unordered_map>
 
 #include "MapTypes.hpp"
 #include "Renderable.hpp"
 #include "Coordinates.hpp"
-#include "ObjectProperties.hpp"
-#include "Animation.hpp"
+
+#include "components/Component.hpp"
+#include "components/Description.hpp"
 
 namespace airball
 {
@@ -39,19 +41,31 @@ typedef std::shared_ptr<const airball::map::Object> SharedCObjectPtr;
 typedef std::weak_ptr<airball::map::Object> WeakObjectPtr;
 typedef std::weak_ptr<const airball::map::Object> WeakCObjectPtr;
 
-
 class Object : public airball::Renderable
 {
+private:
+    typedef std::unordered_map<unsigned, std::shared_ptr<components::Component>> Components;
+
 public:
-    Object(const Coordinates& coord, const ObjectProperties& properties, unsigned uuid);
+    Object(const Coordinates& coord, const components::Description& desc, unsigned uuid);
+
+    Object(const Object& other);
+    Object& operator=(Object other);
+    friend void swap(Object& first, Object& second)
+    {
+        using std::swap;
+
+        swap(first.coord_, second.coord_);
+        swap(first.components_, second.components_);
+        swap(first.uuid_, second.uuid_);
+        swap(first.movingPath_, second.movingPath_);
+    }
 
     SharedObjectPtr clone() const;
 
     static unsigned size();
 
     std::string imageName() const;
-
-    Animation& getAnimation() const;
 
     Coordinates coordinates() const;
     void teleportTo(const Coordinates& coord);
@@ -66,9 +80,45 @@ public:
     const Coordinates& nextStep() const; // UNDEFINED BEHAVIOUR FOR EMPTY PATHS!
     const Path& movingPath() const;
 
-    ObjectProperties& properties();
-    const ObjectProperties& properties() const;
     unsigned uuid() const;
+
+    template <typename T>
+    void addComponent(const T& component)
+    {
+        // First check to avoid component copying on creation of unique_ptr
+        if (components_.find(components::ComponentName<T>::classId()) == components_.end())
+        {
+            components_.insert(std::make_pair(
+                components::ComponentName<T>::classId(),
+                std::make_shared<T>(component)));
+        }
+    }
+
+    template <typename T>
+    bool hasComponent() const
+    {
+        return (components_.find(components::ComponentName<T>::classId()) != components_.end());
+    }
+
+    template <typename T>
+    T& getComponent()
+    {
+        Components::iterator it = components_.find(components::ComponentName<T>::classId());
+        if (it != components_.end())
+            return *(std::static_pointer_cast<T>(it->second));
+        throw std::invalid_argument("Component not found: " +
+            std::to_string(components::ComponentName<T>::classId()));
+    }
+
+    template <typename T>
+    const T& getComponent() const
+    {
+        Components::const_iterator it = components_.find(components::ComponentName<T>::classId());
+        if (it != components_.end())
+            return *(std::static_pointer_cast<const T>(it->second));
+        throw std::invalid_argument("Component not found: " +
+            std::to_string(components::ComponentName<T>::classId()));
+    }
 
     friend bool operator<(const Object& lhs, const Object& rhs)
     {
@@ -81,15 +131,10 @@ private:
 
 private:
     Coordinates coord_;
-    ObjectProperties properties_;
+    Components components_;
     unsigned uuid_;
 
     Path movingPath_;
-
-    // Animation affects only visual appearance of Object and is not very important from any point
-    // of view, so we'll make it mutable to easily pass to Screen::addAnimatedRenderable. 
-    // It's a little dirty hack though, no matter how we'll try to excuse it.
-    mutable Animation animation_;
 };
 
 } // namespace map

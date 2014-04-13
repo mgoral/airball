@@ -20,20 +20,47 @@
 
 #include "World.hpp"
 
+#include "components/Description.hpp"
+#include "components/Animation.hpp"
+
 namespace airball
 {
 namespace map
 {
 
-map::ObjectProperties playerPropertiesFactory()
+components::Description playerDescriptionFactory()
 {
-    map::ObjectProperties prop;
-    prop.image = "player.png";
-    prop.player = true;
-    prop.obstacle = true;
-    prop.creature = true;
+    components::Description descr;
+    descr.image = "player.png";
+    descr.player = true;
+    descr.obstacle = true;
+    descr.creature = true;
 
-    return prop;
+    return descr;
+}
+
+void setObjectAnimation(map::SharedObjectPtr& object)
+{
+    components::Animation anim(8);
+
+    SDL_Rect source = {
+        static_cast<int>(map::Object::size()) * object->coordinates().x,
+        static_cast<int>(map::Object::size()) * object->coordinates().y,
+        static_cast<int>(map::Object::size()),
+        static_cast<int>(map::Object::size())
+    };
+
+    SDL_Rect destination = {
+        static_cast<int>(map::Object::size()) * object->coordinates().x,
+        static_cast<int>(map::Object::size()) * object->coordinates().y,
+        static_cast<int>(map::Object::size()),
+        static_cast<int>(map::Object::size())
+    };
+
+    anim.reset();
+    anim.setMovementSource(source);
+    anim.setMovementDestination(destination);
+    object->addComponent(anim);
 }
 
 World::World() : currentLevelUuid_(0)
@@ -43,8 +70,10 @@ World::World() : currentLevelUuid_(0)
     changeCurrentLevel(firstLevel);
 
     // TODO: objects factory (with uuid assigner)
-    map::SharedCObjectPtr futurePlayer =
-        std::make_shared<map::Object>(freeCoordinates, playerPropertiesFactory(), 0);
+    map::SharedObjectPtr futurePlayer =
+        std::make_shared<map::Object>(freeCoordinates, playerDescriptionFactory(), 0);
+    setObjectAnimation(futurePlayer);
+
     if (firstLevel.addObject(futurePlayer))
     {
         std::vector<map::SharedCObjectPtr> objects = firstLevel.objectsAt(freeCoordinates);
