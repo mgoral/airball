@@ -23,6 +23,8 @@
 #include "components/Description.hpp"
 #include "components/Animation.hpp"
 
+#include "detail/Utils.hpp"
+
 namespace airball
 {
 namespace map
@@ -43,19 +45,8 @@ void setObjectAnimation(map::SharedObjectPtr& object)
 {
     components::Animation anim(8);
 
-    SDL_Rect source = {
-        static_cast<int>(map::Object::size()) * object->coordinates().x,
-        static_cast<int>(map::Object::size()) * object->coordinates().y,
-        static_cast<int>(map::Object::size()),
-        static_cast<int>(map::Object::size())
-    };
-
-    SDL_Rect destination = {
-        static_cast<int>(map::Object::size()) * object->coordinates().x,
-        static_cast<int>(map::Object::size()) * object->coordinates().y,
-        static_cast<int>(map::Object::size()),
-        static_cast<int>(map::Object::size())
-    };
+    SDL_Rect source = airball::detail::coord2Rect(object->coordinates(), map::Object::size());
+    SDL_Rect destination = airball::detail::coord2Rect(object->coordinates(), map::Object::size());
 
     anim.reset();
     anim.setMovementSource(source);

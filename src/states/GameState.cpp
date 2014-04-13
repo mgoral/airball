@@ -26,6 +26,8 @@
 #include "map/Level.hpp"
 #include "map/Actions.hpp"
 
+#include "detail/Utils.hpp"
+
 namespace airball
 {
 namespace states
@@ -134,12 +136,7 @@ void GameState::draw(airball::Screen& screen)
             {
                 // FIXME: remove that shitty Object::size()! Better hardcode it in screen or
                 // somewhere
-                SDL_Rect destination = {
-                    static_cast<int>(map::Object::size()) * x,
-                    static_cast<int>(map::Object::size()) * y,
-                    static_cast<int>(map::Object::size()),
-                    static_cast<int>(map::Object::size())
-                };
+                SDL_Rect destination = detail::coord2Rect(coord, map::Object::size());
                 screen.addRenderable(tile, &destination);
             }
         }
@@ -155,35 +152,24 @@ void GameState::draw(airball::Screen& screen)
         }
         else
         {
-            SDL_Rect destination = {
-                static_cast<int>(map::Object::size() * object->coordinates().x),
-                static_cast<int>(map::Object::size() * object->coordinates().y),
-                static_cast<int>(map::Object::size()),
-                static_cast<int>(map::Object::size())
-            };
+            SDL_Rect destination = detail::coord2Rect(object->coordinates(), map::Object::size());
             screen.addRenderable(*object, &destination);
         }
     }
 
     for (const map::Coordinates& coord : world_.player()->movingPath())
     {
-        SDL_Rect destination = {
-            static_cast<int>(map::Object::size()) * coord.x,
-            static_cast<int>(map::Object::size()) * coord.y,
-            static_cast<int>(map::Object::size()),
-            static_cast<int>(map::Object::size())
-        };
+        SDL_Rect destination = detail::coord2Rect(coord, map::Object::size());
         screen.addRenderable(StaticImage("path_mark.png"), &destination);
     }
 
+    // render a mark on a tile over which is mouse cursor.
     int cursorX, cursorY; // SDL will store mouse position here
     SDL_GetMouseState(&cursorX, &cursorY);
-    SDL_Rect markDestination = {
-        static_cast<int>(map::Object::size()) * (cursorX / static_cast<int>(map::Object::size())),
-        static_cast<int>(map::Object::size()) * (cursorY / static_cast<int>(map::Object::size())),
-        static_cast<int>(map::Object::size()),
-        static_cast<int>(map::Object::size())
-    };
+    map::Coordinates markCoord(
+        (cursorX / static_cast<int>(map::Object::size())),
+        (cursorY / static_cast<int>(map::Object::size())));
+    SDL_Rect markDestination = detail::coord2Rect(markCoord, map::Object::size());
     screen.addRenderable(StaticImage("path_mark.png"), &markDestination);
 
     screen.update();

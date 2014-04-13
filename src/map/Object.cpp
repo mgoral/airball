@@ -21,6 +21,8 @@
 
 #include "components/Animation.hpp"
 
+#include "detail/Utils.hpp"
+
 namespace airball
 {
 namespace map
@@ -144,19 +146,8 @@ void Object::setMovementAnimation(const Coordinates& to)
     {
         components::Animation& animation = getComponent<components::Animation>();
 
-        SDL_Rect source = {
-            static_cast<int>(map::Object::size()) * coord_.x,
-            static_cast<int>(map::Object::size()) * coord_.y,
-            static_cast<int>(map::Object::size()),
-            static_cast<int>(map::Object::size())
-        };
-
-        SDL_Rect destination = {
-            static_cast<int>(map::Object::size()) * to.x,
-            static_cast<int>(map::Object::size()) * to.y,
-            static_cast<int>(map::Object::size()),
-            static_cast<int>(map::Object::size())
-        };
+        SDL_Rect source = detail::coord2Rect(coord_, map::Object::size());
+        SDL_Rect destination = detail::coord2Rect(to, map::Object::size());
 
         animation.reset();
         animation.setMovementSource(source);
